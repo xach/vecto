@@ -100,7 +100,7 @@
 
 (defgeneric image-data (state)
   (:method (state)
-    (png::image-data (image state))))
+    (zpng:image-data (image state))))
 
 (defgeneric transform-function (state)
   (:documentation "Return a function that takes x, y coordinates
@@ -140,23 +140,14 @@ with the result of premultiplying it with MATRIX.")
           (after-paint-fun state) (constantly nil))))
 
 
-(defun make-image-data (width height bpp)
-  "Make an octet vector suitable for use as the image data vector of a
-backing image."
-  (make-array (* width height bpp)
-              :element-type '(unsigned-byte 8)
-              :initial-element #x00))
-
 (defun state-image (state width height)
   "Set the backing image of the graphics state to an image of the
 specified dimensions."
   (setf (image state)
-        (make-instance 'png:png
+        (make-instance 'zpng:png
                        :width width
                        :height height
-                       :color-type +png-color-type+
-                       :image-data (make-image-data width height
-                                                    +png-channels+))
+                       :color-type +png-color-type+)
         (width state) width
         (height state) height
         (clipping-path state) (make-clipping-path width height))

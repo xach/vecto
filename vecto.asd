@@ -28,9 +28,9 @@
 
 (asdf:defsystem #:vecto
   :depends-on (#:cl-vectors
-               (:version #:salza-png "1.0.1")
+               #:zpng
                #:zpb-ttf)
-  :version "1.0.2"
+  :version "1.1"
   :components ((:file "package")
                (:file "utils"
                       :depends-on ("package"))
