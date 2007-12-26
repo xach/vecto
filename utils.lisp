@@ -38,3 +38,18 @@
 (defun octet-float (octet)
   "Convert an octet to a float."
   (/ octet 255.0))
+
+;; hyperdoc definitions
+(defvar *hyperdoc-base-uri* "http://www.xach.com/lisp/vecto/")
+
+(let ((exported-symbols-alist
+       (loop for symbol being the external-symbols of :vecto
+          collect (cons symbol
+                        (concatenate 'string
+                                     "#"
+                                     (string-downcase symbol))))))
+  (defun hyperdoc-lookup (symbol type)
+    (declare (ignore type))
+    (cdr (assoc symbol
+                exported-symbols-alist
+                :test #'eq))))
