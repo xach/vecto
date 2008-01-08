@@ -82,6 +82,7 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
       <li> <a href='#quadratic-to'><tt>quadratic-to</tt></a>
       <li> <a href='#close-subpath'><tt>close-subpath</tt></a>
       <li> <a href='#rectangle'><tt>rectangle</tt></a>
+      <li> <a href='#rounded-rectangle'><tt>rounded-rectangle</tt></a>
       <li> <a href='#centered-ellipse-path'><tt>centered-ellipse-path</tt></a>
       <li> <a href='#centered-circle-path'><tt>centered-circle-path</tt></a>
     </ul>
@@ -646,7 +647,7 @@ stroking:
 
 
 <p><a name='rectangle'>[Function]</a><br>
-<b>rectangle</b> <i>x</i> <i>y</i> <i>width</i> <i>height</i>
+<b>rectangle</b> <i>x</i> <i>y</i> <i>width</i> <i>height</i> => |
 
 <blockquote>
 Creates a rectangular subpath with the given <i>width</i>
@@ -660,6 +661,16 @@ and <i>height</i> that has its lower-left corner at
 (line-to x (+ y height))
 (close-subpath)
 </pre>
+</blockquote>
+
+<p><a name='rounded-rectangle'>[Function]</a><br>
+<b>rounded-rectangle</b> <i>x</i> <i>y</i> 
+<i>width</i> <i>height</i> <i>rx</i> <i>ry</i> => |
+
+<blockquote>
+Like <a href='#rectangle'><tt>RECTANGLE</tt></a>, but rounds the
+corners of the rectangle paths by the x radius <i>rx</i> and the y
+radius <i>ry</i>.
 </blockquote>
 
 <p><a name='centered-ellipse-path'>[Function]</a><br>
