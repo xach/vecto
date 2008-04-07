@@ -133,3 +133,40 @@
 
 (defun identity-matrix ()
   (matrix 1.0 0.0 0.0 1.0 0.0 0.0))
+
+
+;; From http://www.dr-lex.be/random/matrix_inv.html via Raymond Toy
+
+(defun invert-matrix (matrix)
+  (matrix-bind (a11 a12 a21 a22 a31 a32)
+      matrix
+    (let ((a13 0)
+          (a23 0)
+          (a33 1))
+      (let* ((a33a22 (* a33 a22))
+             (a32a23 (* a32 a23))
+             (a33a12 (* a33 a12))
+             (a32a13 (* a32 a13))
+             (a23a12 (* a23 a12))
+             (a22a13 (* a22 a13))
+             (determinant
+              ;; a11(a33a22-a32a23)-a21(a33a12-a32a13)+a31(a23a12-a22a13)
+              (- (* a11 (- a33a22 a32a23))
+                 (+ (* a21 (- a33a12 a32a13))
+                    (* a31 (- a23a12 a22a13))))))
+        ;;   a33a22-a32a23  -(a33a12-a32a13)
+        ;; -(a33a21-a31a23)   a33a11-a31a13
+        ;;   a32a21-a31a22  -(a32a11-a31a12)
+        (let ((a (- a33a22 a32a23))
+              (b (- (- a33a12 a32a13)))
+              (c (- (- (* a33 a21) (* a31 a23))))
+              (d (- (* a33 a11) (* a31 a13)))
+              (e (- (* a32 a21) (* a31 a22)))
+              (f (- (- (* a32 a11) (* a31 a12)))))
+          (matrix (/ a determinant)
+                  (/ b determinant)
+                  (/ c determinant)
+                  (/ d determinant)
+                  (/ e determinant)
+                  (/ f determinant)))))))
+  
