@@ -30,7 +30,7 @@
   :depends-on (#:cl-vectors
                #:zpng
                #:zpb-ttf)
-  :version "1.1"
+  :version "1.2"
   :components ((:file "package")
                (:file "utils"
                       :depends-on ("package"))
