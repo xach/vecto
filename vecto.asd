@@ -63,13 +63,16 @@
                                    "transform-matrix"
                                    "graphics-state"
                                    "drawing"))
+               (:file "arc"
+                      :depends-on ("package"))
                (:file "user-drawing"
                       :depends-on ("package"
                                    "utils"
                                    "clipping-paths"
                                    "graphics-state"
                                    "transform-matrix"
-                                   "text"))
+                                   "text"
+                                   "arc"))
                (:file "user-shortcuts"
                       :depends-on ("user-drawing"))))
 

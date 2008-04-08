@@ -80,6 +80,8 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
       <li> <a href='#line-to'><tt>line-to</tt></a>
       <li> <a href='#curve-to'><tt>curve-to</tt></a>
       <li> <a href='#quadratic-to'><tt>quadratic-to</tt></a>
+      <li> <a href='#arc'><tt>arc</tt></a>
+      <li> <a href='#arcn'><tt>arcn</tt></a>
       <li> <a href='#close-subpath'><tt>close-subpath</tt></a>
       <li> <a href='#rectangle'><tt>rectangle</tt></a>
       <li> <a href='#rounded-rectangle'><tt>rounded-rectangle</tt></a>
@@ -114,6 +116,7 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
 </ul>
 
 <li> <a href='#sect-references'>References</a>
+<li> <a href='#sect-acknowledgements'>Acknowledgements</a>
 <li> <a href='#sect-feedback'>Feedback</a>
 
 </ol>
@@ -616,6 +619,76 @@ subpath.
 </blockquote>
 
 
+<p><a name='arc'>[Function]</a><br>
+<b>arc</b> <i>x</i> <i>y</i> <i>radius</i> <i>angle1</i> <i>angle2</i>
+=> |
+
+<blockquote>
+Appends an arc of a circle to the current path. The center of the arc is
+at (<i>x</i>,<i>y</i>). The arc begins at point at a
+distance <i>radius</i> from the center and with an angle <i>angle1</i>
+radians from the positive x axis, and ends at the point
+with <i>angle2</i> radians. If <i>angle2</i> is less
+than <i>angle1</i>, it is increased by increasing multiples of 2&pi;
+until it is greater than or equal to <i>angle1</i>.
+
+<p><table cellpadding=5>
+    <tr><td align=center><img src="arc.png"></td></tr>
+    <tr><td><span style='color: #0f0'><i>radius</i></span>,
+      <span style='color: #f00'><i>angle1</i></span>,
+      <span style='color: #00f'><i>angle2</i></span></td></tr>
+    </table>
+
+<p>If there is a current point, a straight line is added from the
+  current point to the start point of the arc. Otherwise, a new path
+  is started.
+
+<pre><img class='transparent' style='float: right' src='pie-wedge.png'
+>(defun pie-wedge (file)
+  (with-canvas (:width 80 :height 60)
+    (let ((x 0) (y 0)
+          (radius 70)
+          (angle1 (* (/ pi 180) 15))
+          (angle2 (* (/ pi 180) 45)))
+      (translate 5 5)
+      (set-rgb-fill 1 1 1)
+      (move-to 0 0)
+      (arc x y radius angle1 angle2)
+      (fill-and-stroke)
+      (save-png file))))
+</pre>
+  
+</blockquote>
+
+
+<p><a name='arcn'>[Function]</a><br>
+<b>arcn</b> <i>x</i> <i>y</i> <i>radius</i> <i>angle1</i> <i>angle2</i>
+=> |
+
+<blockquote>
+Like <a href='#arc'><tt>ARC</tt></a>, but draws the arc clockwise
+instead of counterclockwise. If <i>angle2</i> is greater
+than <i>angle1</i>, it is decreased by increasing multiples of 2&pi;
+until it is less than or equal to <i>angle1</i>.
+
+<pre><img class='transparent' style='float: right' src='wiper.png'
+>(defun wiper (file)
+  (with-canvas (:width 70 :height 70)
+    (let ((x 0) (y 0)
+          (r1 40) (r2 60)
+          (angle1 0)
+          (angle2 (* (/ pi 180) 90)))
+      (translate 5 5)
+      (set-rgba-fill 1 1 1 0.75)
+      (arc x y r1 angle1 angle2)
+      (arcn x y r2 angle2 angle1)
+      (fill-and-stroke)
+      (save-png file))))
+</pre>  
+
+</blockquote>
+
+
 <p><a name='close-subpath'>[Function]</a><br>
 <b>close-subpath</b> => |
 
@@ -854,6 +927,12 @@ This constant is useful to draw portions of a circle.
   <li> Wikipedia, <a href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve">B&eacute;zier curve</a>
 
 </ul>
+
+
+<a name='sect-acknowledgements'><h2>Acknowledgements</h2></a>
+
+<p>Many thanks to <a href="http://www.elbeno.com/">Ben Deane</a> for
+  permission to adapt code from his curve library for drawing arcs.
 
 
 <a name='sect-feedback'><h2>Feedback</h2></a>

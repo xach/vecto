@@ -62,6 +62,20 @@ through one control point."
                      (paths:make-bezier-curve (list (paths:make-point cx cy)))
                      (paths:make-point x y)))
 
+(defun draw-arc-curves (curves)
+  (destructuring-bind (((startx . starty) &rest ignored-curve)
+                       &rest ignored-curves)
+      curves
+    (declare (ignore ignored-curve ignored-curves))
+    (if (path *graphics-state*)
+        (line-to startx starty)
+        (move-to startx starty)))
+  (loop for ((x1 . y1)
+             (cx1 . cy1)
+             (cx2 . cy2)
+             (x2 . y2)) in curves
+        do (curve-to cx1 cy1 cx2 cy2 x2 y2)))
+
 (defun %close-subpath (state)
   (setf (paths::path-type (path state)) :closed-polyline))
 
@@ -133,6 +147,17 @@ through one control point."
 
 (defun quadratic-to (cx cy x y)
   (%quadratic-to *graphics-state* cx cy x y))
+
+(defun arc (cx cy r theta1 theta2)
+  (loop while (< theta2 theta1) do (incf theta2 (* 2 pi)))
+  (let ((curves
+         (approximate-elliptical-arc cx cy r r 0 theta1 theta2)))
+    (draw-arc-curves curves)))
+
+(defun arcn (cx cy r theta1 theta2)
+  (loop while (< theta1 theta2) do (decf theta2 (* 2 pi)))
+  (let ((curves (approximate-elliptical-arc cx cy r r 0 theta2 theta1)))
+    (draw-arc-curves (nreverse (mapcar #'nreverse curves)))))
 
 (defun close-subpath ()
   (%close-subpath *graphics-state*))
