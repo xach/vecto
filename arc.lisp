@@ -1,4 +1,4 @@
-;;; Copyright (c) 2007 Zachary Beane, All Rights Reserved
+;;; Copyright (c) 2008 Zachary Beane, All Rights Reserved
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
 ;;; modification, are permitted provided that the following conditions
@@ -151,4 +151,4 @@
                        (+ theta (/ pi 2))
                        (- eta1 (/ pi 2))
                        (- eta2 (/ pi 2)) err)
-      (approximate-arc cx cy a b theta eta1 eta2 err))))
+      (approximate-arc cx cy a b theta eta1 eta2 err)))
