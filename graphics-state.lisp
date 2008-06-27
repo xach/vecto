@@ -192,7 +192,7 @@ specified dimensions."
                  :dash-vector (copy-seq (dash-vector state))
                  :dash-phase (dash-phase state)
                  :fill-color (copy (fill-color state))
-		 :fill-source (fill-source state)
+                 :fill-source (fill-source state)
                  :join-style (join-style state)
                  :cap-style (cap-style state)
                  :transform-matrix (copy-seq (transform-matrix state))

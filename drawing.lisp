@@ -204,7 +204,7 @@ for the set of paths PATHS."
                       (green color)
                       (blue color)
                       (alpha color)
-		      fill-source
+                      fill-source
                       (ecase fill-style
                         (:even-odd #'even-odd-alpha)
                         (:nonzero-winding #'nonzero-winding-alpha))))
@@ -217,7 +217,7 @@ for the set of paths PATHS."
     (when (fill-source state)
       (let ((fill-source (fill-source state)))
        (lambda (x y)
-	 (funcall fill-source x y))))))
+         (funcall fill-source x y))))))
 
 (defun fill-draw-function (state)
   (state-draw-function state (fill-color state) (transformed-fill-source state) :nonzero-winding))
