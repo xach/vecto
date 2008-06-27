@@ -232,6 +232,12 @@ through one control point."
   (draw-stroked-paths *graphics-state*)
   (clear-paths *graphics-state*))
 
+(defun stroke-to-paths ()
+  (let ((paths (state-stroke-paths *graphics-state*)))
+    (clear-paths *graphics-state*)
+    (setf (paths *graphics-state*) paths)
+    (%close-subpath *graphics-state*)))
+  
 (defun fill-path ()
   (draw-filled-paths *graphics-state*)
   (after-painting *graphics-state*)

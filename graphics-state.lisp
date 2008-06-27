@@ -139,6 +139,8 @@ with the result of premultiplying it with MATRIX.")
           (path state) nil
           (after-paint-fun state) (constantly nil))))
 
+(defmethod (setf paths) :after (new-value (state graphics-state))
+  (setf (path state) (first new-value)))
 
 (defun state-image (state width height)
   "Set the backing image of the graphics state to an image of the

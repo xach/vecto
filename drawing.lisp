@@ -210,24 +210,26 @@ for the set of paths PATHS."
     (abs (/ 1.0 (min (transform-matrix-x-scale matrix)
                      (transform-matrix-y-scale matrix))))))
          
-
-(defun draw-stroked-paths (state)
-  "Create a set of paths representing a stroking of the current
-paths of STATE, and draw them to the image."
+(defun state-stroke-paths (state)
+  "Compute the outline paths of the strokes for the current paths of STATE."
   (let ((paths (dash-paths (paths state)
                            (dash-vector state)
                            (dash-phase state)))
         (paths:*bezier-distance-tolerance*
          (* paths:*bezier-distance-tolerance* (tolerance-scale state))))
-    (setf paths (stroke-paths paths
-                              :line-width (line-width state)
-                              :join-style (join-style state)
-                              :cap-style (cap-style state)))
-    (draw-paths :paths paths
-                :width (width state)
-                :height (height state)
-                :transform-function (transform-function state)
-                :draw-function (stroke-draw-function state))))
+    (stroke-paths paths
+                  :line-width (line-width state)
+                  :join-style (join-style state)
+                  :cap-style (cap-style state))))
+
+(defun draw-stroked-paths (state)
+  "Create a set of paths representing a stroking of the current
+paths of STATE, and draw them to the image."
+  (draw-paths :paths (state-stroke-paths state)
+              :width (width state)
+              :height (height state)
+              :transform-function (transform-function state)
+              :draw-function (stroke-draw-function state)))
 
 (defun close-paths (paths)
   (dolist (path paths)

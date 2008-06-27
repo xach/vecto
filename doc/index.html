@@ -83,6 +83,7 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
       <li> <a href='#arc'><tt>arc</tt></a>
       <li> <a href='#arcn'><tt>arcn</tt></a>
       <li> <a href='#close-subpath'><tt>close-subpath</tt></a>
+      <li> <a href='#stroke-to-paths'><tt>stroke-to-paths</tt></a>
       <li> <a href='#rectangle'><tt>rectangle</tt></a>
       <li> <a href='#rounded-rectangle'><tt>rounded-rectangle</tt></a>
       <li> <a href='#centered-ellipse-path'><tt>centered-ellipse-path</tt></a>
@@ -716,6 +717,15 @@ stroking:
   will be drawn with the current line cap style. If the path is
   closed, the start and endpoints will be treated as joined and drawn
   with the line join style.
+</blockquote>
+
+
+<p><a name='stroke-to-paths'>[Function]</a><br>
+<b>stroke-to-paths</b> => |
+
+<blockquote>
+Sets the current active paths to the paths that would result from
+outlining a <a href='#stroke'><tt>STROKE</tt></a> operation.
 </blockquote>
 
 

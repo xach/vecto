@@ -47,6 +47,7 @@
    #:curve-to
    #:quadratic-to
    #:close-subpath
+   #:stroke-to-paths
    #:arc
    #:arcn
    ;; Clipping
