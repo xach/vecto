@@ -56,14 +56,20 @@
 (defun prelerp (p q a)
   (logand #xFF (- (+ p q) (imult a p))))
 
-(defun draw-function (data width height r.fg g.fg b.fg a.fg alpha-fun)
+(defun draw-function (data width height r.fg g.fg b.fg a.fg fill-source alpha-fun)
   "From http://www.teamten.com/lawrence/graphics/premultiplication/"
   (declare (ignore height))
-  (let ((r.fg (float-octet r.fg))
-        (g.fg (float-octet g.fg))
-        (b.fg (float-octet b.fg))
-        (a.fg (float-octet a.fg)))
+  (let* ((r.fg (float-octet r.fg))
+         (g.fg (float-octet g.fg))
+         (b.fg (float-octet b.fg))
+         (a.fg (float-octet a.fg))
+         (fill-fun (or fill-source
+                       (lambda (x y)
+                         (declare (ignore x y))
+                         (values r.fg g.fg b.fg a.fg)))))
     (lambda (x y alpha)
+      (setf (values r.fg g.fg b.fg a.fg)
+            (funcall fill-fun x y))
       (setf alpha (funcall alpha-fun alpha))
       (when (plusp alpha)
         (let* ((i (* +png-channels+ (+ x (* y width))))
@@ -84,19 +90,25 @@
 
 (defun draw-function/clipped (data clip-data
                               width height
-                              r.fg g.fg b.fg a.fg
+                              r.fg g.fg b.fg a.fg fill-source
                               alpha-fun)
   "Like DRAW-FUNCTION, but uses uses the clipping channel."
   (declare (ignore height))
-  (let ((r.fg (float-octet r.fg))
-        (g.fg (float-octet g.fg))
-        (b.fg (float-octet b.fg))
-        (a.fg (float-octet a.fg)))
+  (let* ((r.fg (float-octet r.fg))
+         (g.fg (float-octet g.fg))
+         (b.fg (float-octet b.fg))
+         (a.fg (float-octet a.fg))
+         (fill-fun (or fill-source
+                       (lambda (x y)
+                         (declare (ignore x y))
+                         (values r.fg g.fg b.fg a.fg)))))
     (lambda (x y alpha)
       (let* ((clip-index (+ x (* y width)))
              (clip (aref clip-data clip-index)))
         (setf alpha (imult clip (funcall alpha-fun alpha)))
         (when (plusp alpha)
+          (setf (values r.fg g.fg b.fg a.fg)
+                (funcall fill-fun x y))
           (let* ((i (* clip-index +png-channels+))
                  (r.bg (aref data (+ i 0)))
                  (g.bg (aref data (+ i 1)))
@@ -115,13 +127,13 @@
 
 (defun make-draw-function (data clipping-path
                            width height
-                           r g b a
+                           r g b a fill-source
                            alpha-fun)
   (if (emptyp clipping-path)
-      (draw-function data width height r g b a alpha-fun)
+      (draw-function data width height r g b a fill-source alpha-fun)
       (draw-function/clipped data (clipping-data clipping-path)
                              width height
-                             r g b a
+                             r g b a fill-source
                              alpha-fun)))
 
 (defun intersect-clipping-paths (data temp)
@@ -182,7 +194,7 @@ for the set of paths PATHS."
             (aref image-data j) b
             (aref image-data k) a))))
 
-(defun state-draw-function (state color fill-style)
+(defun state-draw-function (state color fill-source fill-style)
   "Create a draw function for the graphics state STATE."
   (make-draw-function (image-data state)
                       (clipping-path state)
@@ -192,18 +204,26 @@ for the set of paths PATHS."
                       (green color)
                       (blue color)
                       (alpha color)
+		      fill-source
                       (ecase fill-style
                         (:even-odd #'even-odd-alpha)
                         (:nonzero-winding #'nonzero-winding-alpha))))
 
 (defun stroke-draw-function (state)
-  (state-draw-function state (stroke-color state) :nonzero-winding))
+  (state-draw-function state (stroke-color state) nil :nonzero-winding))
+
+(defgeneric transformed-fill-source (state)
+  (:method ((state graphics-state))
+    (when (fill-source state)
+      (let ((fill-source (fill-source state)))
+       (lambda (x y)
+	 (funcall fill-source x y))))))
 
 (defun fill-draw-function (state)
-  (state-draw-function state (fill-color state) :nonzero-winding))
+  (state-draw-function state (fill-color state) (transformed-fill-source state) :nonzero-winding))
 
 (defun even-odd-fill-draw-function (state)
-  (state-draw-function state (fill-color state) :even-odd))
+  (state-draw-function state (fill-color state) (transformed-fill-source state) :even-odd))
 
 (defun tolerance-scale (state)
   (let ((matrix (transform-matrix state)))

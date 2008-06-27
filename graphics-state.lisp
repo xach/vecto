@@ -62,6 +62,9 @@
    (fill-color
     :initarg :fill-color
     :accessor fill-color)
+   (fill-source
+    :initarg :fill-source
+    :accessor fill-source)
    (join-style
     :initarg :join-style
     :accessor join-style)
@@ -91,6 +94,7 @@
    :dash-vector nil
    :dash-phase 0
    :fill-color (make-instance 'rgba-color)
+   :fill-source nil
    :join-style :miter
    :cap-style :butt
    :transform-matrix (scaling-matrix 1.0 -1.0)
@@ -188,6 +192,7 @@ specified dimensions."
                  :dash-vector (copy-seq (dash-vector state))
                  :dash-phase (dash-phase state)
                  :fill-color (copy (fill-color state))
+		 :fill-source (fill-source state)
                  :join-style (join-style state)
                  :cap-style (cap-style state)
                  :transform-matrix (copy-seq (transform-matrix state))
