@@ -73,6 +73,9 @@
                                    "transform-matrix"
                                    "text"
                                    "arc"))
+               (:file "gradient"
+                      :depends-on ("package"
+                                   "graphics-state"))
                (:file "user-shortcuts"
                       :depends-on ("user-drawing"))))
 
