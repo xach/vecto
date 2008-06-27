@@ -293,14 +293,40 @@
     (save-png file)))
 
 
-(defun pdf-circle (file)
-  (pdf:with-document ()
-    (pdf:with-page ()
-      (pdf:rotate 15)
-      (pdf:scale 10 5)
-      (pdf:set-line-width 3)
-      (pdf:circle 50 50 45)
-      (pdf:stroke))
-    (pdf:write-document file)))
+
+(defun test-gradient (file fun)
+  (with-canvas (:width 500 :height 500)
+    (with-graphics-state
+      (set-gradient 100 100 1 0 0 1
+                    200 235 0 1 0 1
+                    :domain-function fun)
+      (rectangle 0 0 500 500)
+      (fill-path))
+    (with-graphics-state
+      (set-rgba-stroke 1 1 1 0.5)
+      (set-dash-pattern #(10 10) 0)
+      (move-to 100 100)
+      (line-to 200 235)
+      (stroke))
+    (set-rgb-stroke 1 1 1)
+    (centered-circle-path 100 100 10)
+    (stroke)
+    (set-rgb-stroke 0 0 0)
+    (centered-circle-path 200 235 10)
+    (stroke)
+    (set-rgb-fill 1 1 1)
+    (let* ((font (get-font #p"~/.fonts/cour.ttf"))
+           (name (string-downcase fun))
+           (bbox (geometry:bbox-box (string-bounding-box name 24 font))))
+      (translate 200 300)
+      (set-font font 24)
+      (setf bbox (geometry:expand bbox 10))
+      (rectangle (geometry:xmin bbox) (geometry:ymin bbox)
+                 (geometry:width bbox) (geometry:height bbox))
+      (fill-and-stroke)
+      (set-rgb-fill 0 0 0)
+      (draw-string 0 0 (string-downcase fun))
+      (fill-path)
+      (save-png file))))
 
 
