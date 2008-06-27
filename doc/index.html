@@ -105,7 +105,9 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
       <li> <a href='#get-font'><tt>get-font</tt></a>
       <li> <a href='#set-font'><tt>set-font</tt></a>
       <li> <a href='#draw-string'><tt>draw-string</tt></a>
+      <li> <a href='#string-paths'><tt>string-paths</tt></a>
       <li> <a href='#draw-centered-string'><tt>draw-centered-string</tt></a>
+      <li> <a href='#centered-string-paths'><tt>centered-string-paths</tt></a>
       <li> <a href='#string-bounding-box'><tt>string-bounding-box</tt></a>
     </ul>
 
@@ -895,6 +897,17 @@ argument for <tt>DRAW-STRING</tt>.
 </blockquote>
 
 
+<p><a name='string-paths'>[Function]</a><br>
+<b>string-paths</b> <i>x</i> <i>y</i> <i>string</i> => |
+
+<blockquote>
+Like <a href='#draw-string'><tt>DRAW-STRING</tt></a>, but instead of
+drawing the text, adds the subpaths that make up the string glyphs to
+the graphics state. This can be used to stroke, fill, or clip based on
+the outlines of a string.
+</blockquote>
+
+
 <p><a name='draw-centered-string'>[Function]</a><br>
 <b>draw-centered-string</b> <i>x</i> <i>y</i> <i>string</i> => |
 
@@ -902,6 +915,16 @@ argument for <tt>DRAW-STRING</tt>.
 Draws <i>string</i> on the canvas with the active font. The horizontal
 center of the string is positioned at <i>x</i> and the baseline of the
 string is positioned at <i>y</i>.
+</blockquote>
+
+
+<p><a name='centered-string-paths'>[Function]</a><br>
+<b>centered-string-paths</b> <i>x</i> <i>y</i> <i>string</i> => |
+
+<blockquote>
+Like <a href='#draw-centered-string'><tt>DRAW-CENTERED-STRING</tt></a>,
+but adds subpaths instead of painting. See
+also <a href='#string-paths'><tt>STRING-PATHS</tt></a>.
 </blockquote>
 
 

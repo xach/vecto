@@ -86,5 +86,7 @@
    #:get-font
    #:set-font
    #:draw-string
-   #:string-bounding-box
-   #:draw-centered-string))
+   #:string-paths
+   #:draw-centered-string
+   #:centered-string-paths
+   #:string-bounding-box))

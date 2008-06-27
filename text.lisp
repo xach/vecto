@@ -49,7 +49,7 @@
     (zpb-ttf:do-contours (contour glyph (nreverse paths))
       (when (plusp (length contour))
         (let ((first-point (aref contour 0)))
-          (setf path (paths:create-path :polygon))
+          (setf path (paths:create-path :closed-polyline))
           (push path paths)
           (paths:path-reset path (glyph-path-point first-point))
           (zpb-ttf:do-contour-segments* (control end)
@@ -65,7 +65,7 @@
   "Return STRING converted to a list of ZPB-TTF glyph objects from FONT."
   (map 'list (lambda (char) (zpb-ttf:find-glyph char loader)) string))
 
-(defun string-paths (x y string font)
+(defun string-primitive-paths (x y string font)
   "Return the paths of STRING, transformed by the font scale of FONT."
   (let ((glyphs (string-glyphs string (loader font)))
         (loader (loader font))
