@@ -212,18 +212,17 @@ for the set of paths PATHS."
 (defun stroke-draw-function (state)
   (state-draw-function state (stroke-color state) nil :nonzero-winding))
 
-(defgeneric transformed-fill-source (state)
-  (:method ((state graphics-state))
-    (when (fill-source state)
-      (let ((fill-source (fill-source state)))
-       (lambda (x y)
-         (funcall fill-source x y))))))
-
 (defun fill-draw-function (state)
-  (state-draw-function state (fill-color state) (transformed-fill-source state) :nonzero-winding))
+  (state-draw-function state
+                       (fill-color state)
+                       (fill-source state)
+                       :nonzero-winding))
 
 (defun even-odd-fill-draw-function (state)
-  (state-draw-function state (fill-color state) (transformed-fill-source state) :even-odd))
+  (state-draw-function state
+                       (fill-color state)
+                       (fill-source state)
+                       :even-odd))
 
 (defun tolerance-scale (state)
   (let ((matrix (transform-matrix state)))
