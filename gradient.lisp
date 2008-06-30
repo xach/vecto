@@ -36,7 +36,7 @@
                           (expt (- y1 y0) 2))))
       (/ numerator denominator))))
 
-(defun extend-domain (param)
+(defun linear-domain (param)
   (clamp-range 0 param 1))
 
 (defun bilinear-domain (param)
@@ -52,7 +52,7 @@
                      &key
                      (extend-start t)
                      (extend-end t)
-                     (domain-function 'extend-domain))
+                     (domain-function 'linear-domain))
   (let* ((matrix (transform-matrix *graphics-state*))
          (fun (make-transform-function (invert-matrix matrix)))
          (gfun (gradient-parameter-fun x0 y0 x1 y1)))
