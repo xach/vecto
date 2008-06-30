@@ -122,17 +122,19 @@ through one control point."
          (width/2 (/ (- (xmax bbox) (xmin bbox)) 2.0)))
     (%draw-string state (- x width/2) y string)))
 
-(defun string-paths (state x y string)
-  (setf (paths state)
-        (append (paths state) (%string-paths state x y string)))
+(defun string-paths (x y string)
+  (setf (paths *graphics-state*)
+        (append (paths *graphics-state*)
+                (%string-paths *graphics-state* x y string)))
   (values))
 
-(defun centered-string-paths (state x y string)
-  (let* ((font (font state))
+(defun centered-string-paths (x y string)
+  (let* ((font (font *graphics-state*))
          (bbox (string-bounding-box string (size font) (loader font)))
          (width/2 (/ (- (xmax bbox) (xmin bbox)) 2.0)))
-    (setf (paths state)
-          (append (paths state) (%string-paths state (- x width/2) y string)))
+    (setf (paths *graphics-state*)
+          (append (paths *graphics-state*)
+                  (%string-paths *graphics-state* (- x width/2) y string)))
     (values)))
 
 
