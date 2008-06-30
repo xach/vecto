@@ -60,6 +60,7 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
       <li> <a href='#with-graphics-state'><tt>with-graphics-state</tt></a>
       <li> <a href='#set-rgba-fill'><tt>set-rgba-fill</tt></a>
       <li> <a href='#set-rgba-fill'><tt>set-rgb-fill</tt></a>
+      <li> <a href='#set-gradient-fill'><tt>set-gradient-fill</tt></a>
       <li> <a href='#set-rgba-stroke'><tt>set-rgba-stroke</tt></a>
       <li> <a href='#set-rgba-stroke'><tt>set-rgb-stroke</tt></a>
       <li> <a href='#set-line-cap'><tt>set-line-cap</tt></a>
@@ -234,17 +235,22 @@ distribution. That file starts with:
     (centered-circle-path 20 20 10)
     (fill-path)
     (flet ((quarter-circle (x y radius)
-             (let ((kappa (* <a href='#const-kappa'>+kappa+</a> radius)))
-               (move-to (+ x radius) y)
-               (curve-to (+ x radius) (+ y kappa)
-                         (+ x kappa) (+ y radius)
-                         x (+ y radius)))))
+             (move-to (+ x radius) y)
+             (<a href='#arc'>arc</a> x y radius 0 (/ pi 2))))
       (set-rgb-stroke 1.0 1.0 1.0)
       (set-line-width 15)
       (quarter-circle 20 20 30)
       (stroke)
       (quarter-circle 20 20 60)
       (stroke))
+    (rounded-rectangle 5 5 90 90 7 7)
+    (<a href='#set-gradient'>set-gradient-fill</a> 50 90
+                       1.0 1.0 1.0 0.7
+                       50 20
+                       1.0 1.0 1.0 0.0)
+    (set-line-width 2)
+    (set-rgba-stroke 1.0 1.0 1.0 0.1)
+    (<a href='#fill-and-stroke'>fill-and-stroke</a>)
     (save-png file)))
 </pre>
 
@@ -351,6 +357,61 @@ href='#even-odd-fill'><tt>EVEN-ODD-FILL</tt></a>, <a
 href='#fill-and-stroke'><tt>FILL-AND-STROKE</tt></a>, <a
 href='#even-odd-fill-and-stroke'><tt>EVEN-ODD-FILL-AND-STROKE</tt></a>,
 and <a href='#draw-string'><tt>DRAW-STRING</tt></a>.
+
+</blockquote>
+
+<p><a name='set-gradient-fill'>[Function]</a><br>
+<b>set-gradient-fill</b> 
+<i>x0</i> <i>y0</i> <i>r0</i> <i>g0</i> <i>b0</i> <i>a0</i> 
+<i>x1</i> <i>y1</i> <i>r1</i> <i>g1</i> <i>b1</i> <i>a1</i>
+<tt>&amp;key</tt> (<i>extend-start</i> <tt>t</tt>) 
+(<i>extend-end</i> <tt>t</tt>)
+(<i>domain-function</i> <tt>'linear-domain</tt>)
+
+<blockquote>
+Set the fill color source to an axial gradient. The start point
+is <i>x0,y0</i> and the start color is <i>r0,g0,b0,a0</i>. The end
+point is <i>x1, y1</i> and the end color is <i>r1,g1,b1,a1</i>.
+
+<p>Two domain functions are available:
+
+<ul> 
+
+<li> <tt>LINEAR-DOMAIN</tt>, the default, makes a transition from the
+start color to the end color along the axis between the start and end
+points
+
+<li> <tt>BILINEAR-DOMAIN</tt> makes a transition from the start color
+to the end color from the start point to the midpoint, then back to
+the start color from the midpoint to the end point
+</ul>
+
+<pre><img style='float: right' class='transparent'
+ src='linear-gradient.png'>(defun gradient-example (file)
+  (with-canvas (:width 200 :height 50)
+    (set-gradient-fill 25 0
+                       1 0 0 1
+                       175 0
+                       1 0 0 0)
+    (rectangle 0 0 200 50)
+    (fill-path)
+    (save-png file)))
+</pre>
+
+<pre><img style='float: right' class='transparent'
+ src='bilinear-gradient.png'>(defun gradient-bilinear-example (file)
+  (with-canvas (:width 200 :height 50)
+    (set-gradient-fill 25 0
+                       1 0 0 1
+                       175 0
+                       1 0 0 0
+                       :domain-function 'bilinear-domain)
+    (rectangle 0 0 200 50)
+    (fill-path)
+    (save-png file)))
+</pre>
+
+<p>
 
 </blockquote>
 
@@ -795,8 +856,8 @@ stroked, it is no longer active; it effectively disappears.
 <b>fill-path</b> => |
 
 <blockquote>
-Fills the current path with the fill color. If the path has not been
-explicitly closed
+Fills the current path with the fill color or gradient. If the path
+has not been explicitly closed
 with <a href='#close-subpath'><tt>CLOSE-SUBPATH</tt></a>, it is
 implicitly closed before filling.  The non-zero winding rule is used
 to determine what areas are considered inside the path.

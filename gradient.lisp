@@ -45,14 +45,14 @@
         param
         (- 2 param))))
 
-(defun set-gradient (x0 y0
-                     r0 g0 b0 a0
-                     x1 y1
-                     r1 g1 b1 a1
-                     &key
-                     (extend-start t)
-                     (extend-end t)
-                     (domain-function 'linear-domain))
+(defun set-gradient-fill (x0 y0
+                          r0 g0 b0 a0
+                          x1 y1
+                          r1 g1 b1 a1
+                          &key
+                          (extend-start t)
+                          (extend-end t)
+                          (domain-function 'linear-domain))
   (let* ((matrix (transform-matrix *graphics-state*))
          (fun (make-transform-function (invert-matrix matrix)))
          (gfun (gradient-parameter-fun x0 y0 x1 y1)))

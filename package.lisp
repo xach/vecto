@@ -76,8 +76,7 @@
    #:set-rgb-stroke
    #:set-rgba-fill
    #:set-rgb-fill
-   #:set-fill-source
-   #:set-gradient
+   #:set-gradient-fill
    #:linear-domain
    #:bilinear-domain
    ;; graphics state coordinate transforms

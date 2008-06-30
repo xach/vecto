@@ -60,17 +60,22 @@
     (centered-circle-path 20 20 10)
     (fill-path)
     (flet ((quarter-circle (x y radius)
-             (let ((kappa (* +kappa+ radius)))
-               (move-to (+ x radius) y)
-               (curve-to (+ x radius) (+ y kappa)
-                         (+ x kappa) (+ y radius)
-                         x (+ y radius)))))
+             (move-to (+ x radius) y)
+             (arc x y radius 0 (/ pi 2))))
       (set-rgb-stroke 1.0 1.0 1.0)
       (set-line-width 15)
       (quarter-circle 20 20 30)
       (stroke)
       (quarter-circle 20 20 60)
       (stroke))
+    (rounded-rectangle 5 5 90 90 7 7)
+    (set-gradient 50 90
+                  1.0 1.0 1.0 0.7
+                  50 20
+                  1.0 1.0 1.0 0.0)
+    (set-line-width 2)
+    (set-rgba-stroke 1.0 1.0 1.0 0.1)
+    (fill-and-stroke)
     (save-png file)))
 
 (defun star-clipping (file)
@@ -95,3 +100,26 @@
               repeat 20 do
               (circle i)))
       (save-png file))))
+
+(defun gradient-example (file)
+  (with-canvas (:width 200 :height 50)
+    (set-gradient-fill 25 0
+                       1 0 0 1
+                       175 0
+                       1 0 0 0)
+    (rectangle 0 0 200 50)
+    (fill-path)
+    (save-png file)))
+
+(defun gradient-bilinear-example (file)
+  (with-canvas (:width 200 :height 50)
+    (set-gradient-fill 25 0
+                       1 0 0 1
+                       175 0
+                       1 0 0 0
+                       :domain-function 'bilinear-domain)
+    (rectangle 0 0 200 50)
+    (fill-path)
+    (save-png file)))
+                  
+                         
