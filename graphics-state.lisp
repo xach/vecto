@@ -179,6 +179,8 @@ specified dimensions."
   (:method ((state graphics-state))
     (close-font-loaders state)))
 
+(defun clear-fill-source (state)
+  (setf (fill-source state) nil))
 
 (defmethod copy ((state graphics-state))
   (make-instance 'graphics-state

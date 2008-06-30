@@ -239,9 +239,11 @@ through one control point."
   (set-rgba-color (stroke-color *graphics-state*) r g b a))
 
 (defun set-rgb-fill (r g b)
+  (clear-fill-source *graphics-state*)
   (set-rgb-color (fill-color *graphics-state*) r g b))
 
 (defun set-rgba-fill (r g b a)
+  (clear-fill-source *graphics-state*)
   (set-rgba-color (fill-color *graphics-state*) r g b a))
 
 (defun stroke ()
