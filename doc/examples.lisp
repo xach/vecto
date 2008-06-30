@@ -121,5 +121,17 @@
     (rectangle 0 0 200 50)
     (fill-path)
     (save-png file)))
-                  
-                         
+
+(defun text-paths (file)
+  (with-canvas (:width 400 :height 100)
+    (set-font (get-font "/tmp/font.ttf") 70)
+    (centered-string-paths 200 15 "Hello, world!")
+    (set-line-join :round)
+    (set-line-cap :round)
+    (set-line-width 3)
+    (set-dash-pattern #(0 5) 0)
+    (stroke-to-paths)
+    (set-gradient-fill 0 0   1 0 0 0.5
+                       0 100 1 1 1 1)
+    (fill-path)
+    (save-png file)))
