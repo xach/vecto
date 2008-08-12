@@ -131,7 +131,7 @@
 (defun approximate-arc (cx cy a b theta eta1 eta2 err)
   (cond ((< eta2 eta1)
          (error "approximate-arc: eta2 must be bigger than eta1"))
-        ((> (- eta2 eta1) (/ pi 2))
+        ((> (- eta2 eta1) (+ (/ pi 2) long-float-epsilon))
          (let ((etamid (+ eta1 (/ pi 2))))
            (nconc
             (approximate-arc cx cy a b theta eta1 etamid err)
