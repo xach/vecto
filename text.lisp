@@ -65,7 +65,7 @@
   "Return STRING converted to a list of ZPB-TTF glyph objects from FONT."
   (map 'list (lambda (char) (zpb-ttf:find-glyph char loader)) string))
 
-(defun string-primitive-paths (x y string font)
+(defun string-primitive-paths (x y string font &key (character-spacing 1.0d0))
   "Return the paths of STRING, transformed by the font scale of FONT."
   (let ((glyphs (string-glyphs string (loader font)))
         (loader (loader font))
@@ -80,7 +80,9 @@
               (let* ((next (first rest))
                      (offset (+ (zpb-ttf:advance-width glyph)
                                 (zpb-ttf:kerning-offset glyph next loader))))
-                (setf matrix (nmult (translation-matrix offset 0)
+                (setf matrix (nmult (translation-matrix (* offset
+                                                           character-spacing)
+                                                        0)
                                     matrix))))))
     paths))
 
@@ -118,14 +120,15 @@ with the new values."
 glyphs of LOADER at SIZE units."
   (float (/ size (zpb-ttf:units/em loader))))
 
-(defun string-bounding-box (string size loader)
+(defun string-bounding-box (string size loader &key (character-spacing 1.0d0))
   (let* ((bbox (empty-bounding-box))
          (scale (loader-font-scale size loader))
          (fun (make-transform-function (scaling-matrix scale scale)))
          (glyphs (string-glyphs string loader))
          (offset 0))
     (loop for (glyph . rest) on glyphs do
-          (let ((glyph-box (advance-bounding-box (bounding-box glyph) offset)))
+          (let ((glyph-box (advance-bounding-box (bounding-box glyph)
+                                                 (* offset character-spacing))))
             (setf bbox (nmerge-bounding-boxes bbox glyph-box))
             (incf offset (zpb-ttf:advance-width glyph))
             (when rest

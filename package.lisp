@@ -86,8 +86,10 @@
    #:skew
    #:scale
    ;; text
+   #:*default-character-spacing*
    #:get-font
    #:set-font
+   #:set-character-spacing
    #:draw-string
    #:string-paths
    #:draw-centered-string

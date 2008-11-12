@@ -110,7 +110,8 @@ through one control point."
   (let ((font (font state)))
     (unless font
       (error "No font currently set"))
-    (string-primitive-paths x y string font)))
+    (string-primitive-paths x y string font
+                            :character-spacing (character-spacing state))))
 
 (defun %draw-string (state x y string)
   (draw-paths/state (%string-paths state x y string)
@@ -118,7 +119,8 @@ through one control point."
 
 (defun %draw-centered-string (state x y string)
   (let* ((font (font state))
-         (bbox (string-bounding-box string (size font) (loader font)))
+         (bbox (string-bounding-box string (size font) (loader font)
+                                    :character-spacing (character-spacing state)))
          (width/2 (/ (- (xmax bbox) (xmin bbox)) 2.0)))
     (%draw-string state (- x width/2) y string)))
 
@@ -195,6 +197,9 @@ through one control point."
 
 (defun set-font (font size)
   (%set-font *graphics-state* font size))
+
+(defun set-character-spacing (spacing)
+  (setf (character-spacing *graphics-state*) spacing))
 
 (defun draw-string (x y string)
   (%draw-string *graphics-state* x y string))

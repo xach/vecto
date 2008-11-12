@@ -30,6 +30,7 @@
 
 (defconstant +png-channels+ 4)
 (defconstant +png-color-type+ :truecolor-alpha)
+(defvar *default-character-spacing* 1.0d0)
 
 (defclass graphics-state ()
   ((paths
@@ -85,7 +86,10 @@
     :accessor font-loaders)
    (font
     :initarg :font
-    :accessor font))
+    :accessor font)
+   (character-spacing
+    :initarg :character-spacing
+    :accessor character-spacing))
   (:default-initargs
    :paths nil
    :path nil
@@ -100,7 +104,8 @@
    :transform-matrix (scaling-matrix 1.0 -1.0)
    :after-paint-fun (constantly nil)
    :font-loaders (make-hash-table :test 'equal)
-   :font nil))
+   :font nil
+   :character-spacing *default-character-spacing*))
 
 (defgeneric image-data (state)
   (:method (state)
@@ -201,4 +206,5 @@ specified dimensions."
                  :clipping-path (copy (clipping-path state))
                  :after-paint-fun (after-paint-fun state)
                  :font-loaders (font-loaders state)
-                 :font (font state)))
+                 :font (font state)
+                 :character-spacing (character-spacing state)))

@@ -108,6 +108,8 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
     <ul>
       <li> <a href='#get-font'><tt>get-font</tt></a>
       <li> <a href='#set-font'><tt>set-font</tt></a>
+      <li> <a href='#set-character-spacing'><tt>set-character-spacing</tt></a>
+      <li> <a href='#*default-character-spacing*'><tt>*default-character-spacing*</tt></a>
       <li> <a href='#draw-string'><tt>draw-string</tt></a>
       <li> <a href='#string-paths'><tt>string-paths</tt></a>
       <li> <a href='#draw-centered-string'><tt>draw-centered-string</tt></a>
@@ -945,6 +947,36 @@ closed at the end of <a href='#with-canvas'><tt>WITH-CANVAS</tt></a>.
 </blockquote>
 
 
+<p><a name='set-character-spacing'>[Function]</a><br>
+<b>set-character-spacing</b> <i>spacing</i> => |
+
+<blockquote>
+Sets the scale of the spacing used between characters when drawing
+text with <a href='#draw-string'><tt>DRAW-STRING</tt></a> and related
+functions.
+
+<p>Normally, the character spacing for drawing text is taken directly
+  from a font's advance-width and kerning
+  metrics. <tt>SET-CHARACTER-SPACING</tt> can be used to adjust this
+  spacing; for example, a character spacing of 2.0d0 would double the
+  normal space between characters, and 0.5d0 would halve it.
+</blockquote>
+
+<p><a name='*default-character-spacing*'>[Special variable]</a><br>
+<b>*default-character-spacing*</b>
+
+<blockquote>
+The default scale for character spacing when drawing text
+with <a href='#draw-string'><tt>DRAW-STRING</tt></a> and related
+functions. Initial value is 1.0d0.
+
+<p>Changes to this variable affect the
+  next <a href='#with-canvas'><tt>WITH-CANVAS</tt></a> form. To affect
+  the spacing within the current <tt>WITH-CANVAS</tt> form,
+  use <a href='#set-character-spacing'><tt>SET-CHARACTER-SPACING</tt></a>.
+</blockquote>
+
+
 <p><a name='draw-string'>[Function]</a><br>
 <b>draw-string</b> <i>x</i> <i>y</i> <i>string</i> => |
 
@@ -958,6 +990,13 @@ filled with the current <a href='#set-rgba-fill'>fill color</a>.
 string) or a vector containing characters, Unicode code-points, or both. For
 example, <tt>#(#\L #\a #\m #\b #\d #\a #\= #x3BB)</tt> is a valid
 argument for <tt>DRAW-STRING</tt>.
+
+<p>The horizontal space between characters is determined by the
+advance-width and kerning metrics of the font, then multiplied by
+the current character spacing. At the default character spacing of
+1.0d0, the spacing is not adjusted at
+all. <a href='#set-character-spacing'><tt>SET-CHARACTER-SPACING</tt></a>
+can be used to increase or decrease the character spacing.
 </blockquote>
 
 
