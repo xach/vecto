@@ -69,10 +69,10 @@
       (quarter-circle 20 20 60)
       (stroke))
     (rounded-rectangle 5 5 90 90 7 7)
-    (set-gradient 50 90
-                  1.0 1.0 1.0 0.7
-                  50 20
-                  1.0 1.0 1.0 0.0)
+    (set-gradient-fill 50 90
+                       1.0 1.0 1.0 0.7
+                       50 20
+                       1.0 1.0 1.0 0.0)
     (set-line-width 2)
     (set-rgba-stroke 1.0 1.0 1.0 0.1)
     (fill-and-stroke)
