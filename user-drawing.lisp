@@ -276,6 +276,7 @@ through one control point."
 (defun fill-and-stroke ()
   (draw-filled-paths *graphics-state*)
   (draw-stroked-paths *graphics-state*)
+  (after-painting *graphics-state*)
   (clear-paths *graphics-state*))
 
 (defun even-odd-fill-and-stroke ()
