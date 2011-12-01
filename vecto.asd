@@ -31,6 +31,8 @@
                #:zpng
                #:zpb-ttf)
   :version "1.4.3"
+  :author "Zach Beane <xach@xach.com>"
+  :description "Create vector graphics in PNG files."
   :components ((:file "package")
                (:file "utils"
                       :depends-on ("package"))
