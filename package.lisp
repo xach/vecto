@@ -91,7 +91,10 @@
    #:set-font
    #:set-character-spacing
    #:draw-string
+   #:draw-string-fast
    #:string-paths
    #:draw-centered-string
    #:centered-string-paths
-   #:string-bounding-box))
+   #:string-bounding-box
+   ;; images
+   #:draw-image))
