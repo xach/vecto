@@ -94,66 +94,67 @@ through one control point."
 
 ;;; Image drawing
 
-(defun %draw-image (dest-image-data dest-image-width source-image-data source-image-width x y 
-		    &key override-r override-g override-b)
+(defun %draw-image (dest-image-data dest-image-width source-image-data 
+                    source-image-width x y &key override-r override-g override-b)
   "Combine, with alpha blending, the RGBA octet vector SOURCE-IMAGE-DATA into
-the RGBA octet vector DEST-IMAGE-DATA at offset (X,Y). The red, green, and blue channels in
-SOURCE-IMAGE-DATA may be overridden as if all (non-transparent) pixels have a
-particular value for the overriden channel."
-  (declare (type octet-vector dest-image-data source-image-data)
-	   (type fixnum x y dest-image-width source-image-width))
+the RGBA octet vector DEST-IMAGE-DATA at offset (X,Y). The red, green, and
+blue channels in SOURCE-IMAGE-DATA may be overridden as if all (non-transparent) 
+pixels have a particular value for the overriden channel."
+  (declare (type octet-vector dest-image-data source-image-data))
   (let* ((src-row-length (* source-image-width 4))
-	 (dst-row-length (* dest-image-width 4))
-	 (src-vec-length (length source-image-data))
-	 (start-index (* (+ x (* (- (height *graphics-state*) y (/ src-vec-length src-row-length)) 
-				 dest-image-width))
-			 4)))
-    (declare (type fixnum start-index src-row-length 
-		   dst-row-length src-vec-length))
+         (dst-row-length (* dest-image-width 4))
+         (src-vec-length (length source-image-data))
+         (start-index (* (+ x (* (- (height *graphics-state*) 
+                                    y 
+                                    (/ src-vec-length src-row-length)) 
+                                 dest-image-width))
+                         4)))
+    (declare (type vector-index start-index src-row-length 
+                   dst-row-length src-vec-length))
     (do* ((i-dst start-index (+ i-dst 4))
-	  (line-start i-dst (if (>= (- i-dst line-start) src-row-length)
-				(setf i-dst (+ (- dst-row-length src-row-length) i-dst))
-				line-start))
-	  (i-src 0 (+ i-src 4)))
-	 ((<= src-vec-length i-src))
-      (declare (type fixnum i-dst line-start i-src))
+          (line-start i-dst (if (>= (- i-dst line-start) src-row-length)
+                                (setf i-dst (+ (- dst-row-length src-row-length) i-dst))
+                                line-start))
+          (i-src 0 (+ i-src 4)))
+         ((<= src-vec-length i-src))
+      (declare (type vector-index i-dst line-start i-src))
       (let ((a.fg-octet (aref source-image-data (+ i-src 3))))
-	(cond 
-	  ;; opaque pixel, copy without blending
-	  ((= a.fg-octet #xFF)
-	   (setf (aref dest-image-data i-dst)
-		 (or override-r (aref source-image-data i-src))
-		 (aref dest-image-data (+ i-dst 1))
-		 (or override-g (aref source-image-data (+ i-src 1)))
-		 (aref dest-image-data (+ i-dst 2))
-		 (or override-b (aref source-image-data (+ i-src 2)))
-		 (aref dest-image-data (+ i-dst 3)) #xFF))
-	  ;; semi-transparent pixel, blend (skip if fully transparent)
-	  ((plusp a.fg-octet)
-	   (let* ((a.fg (octet-float a.fg-octet))
-		  (a.bg (octet-float (aref dest-image-data (+ i-dst 3))))
-		  (a.bg*a.fg_inverse (* a.bg (- 1.0 a.fg)))
-		  (a.new (+ a.fg a.bg*a.fg_inverse)))
-	     (declare (type float a.fg a.bg a.bg*a.fg_inverse a.new))
-	     (setf (aref dest-image-data (+ i-dst 3)) (float-octet a.new))
-	     (flet ((blend (fg bg)
-		      (float-octet (/ 
-				    (+ (* (octet-float fg) a.fg) 
-				       (* (octet-float bg) a.bg*a.fg_inverse)) 
-				    a.new))))
-	       (if (zerop a.new)
-		   (setf (aref dest-image-data i-dst) 0
-			 (aref dest-image-data (+ i-dst 1)) 0
-			 (aref dest-image-data (+ i-dst 2)) 0)
-		   (setf (aref dest-image-data i-dst)
-			 (blend (or override-r (aref source-image-data i-src)) 
-				(aref dest-image-data i-dst))
-			 (aref dest-image-data (+ i-dst 1))
-			 (blend (or override-g (aref source-image-data (+ i-src 1))) 
-				(aref dest-image-data (+ i-dst 1)))
-			 (aref dest-image-data (+ i-dst 2))
-			 (blend (or override-b (aref source-image-data (+ i-src 2))) 
-				(aref dest-image-data (+ i-dst 2)))))))))))))
+        (cond 
+          ;; opaque pixel, copy without blending
+          ((= a.fg-octet #xFF)
+           (setf (aref dest-image-data i-dst)
+                 (or override-r (aref source-image-data i-src))
+                 (aref dest-image-data (+ i-dst 1))
+                 (or override-g (aref source-image-data (+ i-src 1)))
+                 (aref dest-image-data (+ i-dst 2))
+                 (or override-b (aref source-image-data (+ i-src 2)))
+                 (aref dest-image-data (+ i-dst 3)) #xFF))
+          ;; semi-transparent pixel, blend (skip if fully transparent)
+          ((plusp a.fg-octet)
+           (let* ((a.fg (octet-float a.fg-octet))
+                  (a.bg (octet-float (aref dest-image-data (+ i-dst 3))))
+                  (a.bg*a.fg_inverse (* a.bg (- 1.0 a.fg)))
+                  (a.new (+ a.fg a.bg*a.fg_inverse)))
+             (declare (type float a.fg a.bg a.bg*a.fg_inverse a.new))
+             (setf (aref dest-image-data (+ i-dst 3)) (float-octet a.new))
+             (flet ((blend (fg bg)
+                      (float-octet (/ 
+                                    (+ (* (octet-float fg) a.fg) 
+                                       (* (octet-float bg) a.bg*a.fg_inverse)) 
+                                    a.new))))
+               (if (zerop a.new)
+                   (setf (aref dest-image-data i-dst) 0
+                         (aref dest-image-data (+ i-dst 1)) 0
+                         (aref dest-image-data (+ i-dst 2)) 0)
+                   (setf (aref dest-image-data i-dst)
+                         (blend (or override-r (aref source-image-data i-src)) 
+                                (aref dest-image-data i-dst))
+                         (aref dest-image-data (+ i-dst 1))
+                         (blend (or override-g (aref source-image-data (+ i-src 1))) 
+                                (aref dest-image-data (+ i-dst 1)))
+                         (aref dest-image-data (+ i-dst 2))
+                         (blend (or override-b (aref source-image-data (+ i-src 2))) 
+                                (aref dest-image-data (+ i-dst 2)))))))))))))
 
 ;;; Text
 
@@ -184,47 +185,47 @@ particular value for the overriden channel."
   "Retrieve a glyph bitmap from the cache if it is present. Otherwise, render
 it, add it to the cache, and return it."
   (let* ((font-key 
-	  ;; Use namestring of the font loader pathname as the hash
-	  ;; key. Namestring can be somewhat expensive to do on a
-	  ;; per-character basis depending on how it is implemented, hence we
-	  ;; cache it under *last-font-hash-key*
-	  (or (when (eq *last-font* font) *last-font-hash-key*) 
-	      (setf *last-font* font
-		    *last-font-hash-key*
-		    (namestring (zpb-ttf::input-stream (loader font))))))
-	 (font-cache-plist (gethash font-key *font-render-caches*))
-	 (font-cache (getf font-cache-plist (size font))))
+          ;; Use namestring of the font loader pathname as the hash
+          ;; key. Namestring can be somewhat expensive to do on a
+          ;; per-character basis depending on how it is implemented, hence we
+          ;; cache it under *last-font-hash-key*
+          (or (when (eq *last-font* font) *last-font-hash-key*) 
+              (setf *last-font* font
+                    *last-font-hash-key*
+                    (namestring (zpb-ttf::input-stream (loader font))))))
+         (font-cache-plist (gethash font-key *font-render-caches*))
+         (font-cache (getf font-cache-plist (size font))))
     (unless font-cache
       (setf font-cache (make-hash-table :size 128))
       (setf (getf font-cache-plist (size font)) font-cache)
       (setf (gethash font-key *font-render-caches*) font-cache-plist))
     (let ((cached-image (gethash character font-cache))) 
       (if cached-image 
-	  cached-image
-	  (setf (gethash character font-cache) 
-		(render-character-glyph-bitmap character font))))))
+          cached-image
+          (setf (gethash character font-cache) 
+                (render-character-glyph-bitmap character font))))))
 
 (defun render-character-glyph-bitmap (character font)
   "Returns a zpng:png instance containing the rendered character. More
 efficient representations are possible but 32-bit RGBA was chosen for
 convenience."
   (let* ((loader (loader font))
-	 (font-size (size font))
-	 (scale-factor (loader-font-scale font-size loader))
-	 (glyph (zpb-ttf:find-glyph character loader))
-	 (bbox (bounding-box glyph))
-	 (ch-width (+ 2 (round (* scale-factor (- (xmax bbox) (xmin bbox))))))
-	 (ch-height (+ 2 (round (* scale-factor (- (ymax bbox) (ymin bbox))))))
-	 (ch-x-offset (1+ (round (* scale-factor (- (xmin bbox))))))
-	 (ch-y-offset (1+ (round (* scale-factor (- (ymin bbox))))))
-	 (ch-state (make-instance 'graphics-state
-				  :fill-color (make-instance 'rgba-color 
-							     :red 0.0 :green 0.0 
-							     :blue 0.0 :alpha 1.0)
-				  :fill-source (fill-source *graphics-state*)
-				  :font-loaders (font-loaders *graphics-state*)
-				  :font font
-				  :character-spacing (character-spacing *graphics-state*))))
+         (font-size (size font))
+         (scale-factor (loader-font-scale font-size loader))
+         (glyph (zpb-ttf:find-glyph character loader))
+         (bbox (bounding-box glyph))
+         (ch-width (+ 2 (round (* scale-factor (- (xmax bbox) (xmin bbox))))))
+         (ch-height (+ 2 (round (* scale-factor (- (ymax bbox) (ymin bbox))))))
+         (ch-x-offset (1+ (round (* scale-factor (- (xmin bbox))))))
+         (ch-y-offset (1+ (round (* scale-factor (- (ymin bbox))))))
+         (ch-state (make-instance 'graphics-state
+                                  :fill-color (make-instance 'rgba-color 
+                                                             :red 0.0 :green 0.0 
+                                                             :blue 0.0 :alpha 1.0)
+                                  :fill-source (fill-source *graphics-state*)
+                                  :font-loaders (font-loaders *graphics-state*)
+                                  :font font
+                                  :character-spacing (character-spacing *graphics-state*))))
     (state-image ch-state ch-width ch-height)
     (fill-image (image-data ch-state) 1.0 1.0 1.0 0.0)
     (%draw-string ch-state ch-x-offset ch-y-offset (string character))
@@ -234,47 +235,47 @@ convenience."
   "Like DRAW-STRING, but caches glyph bitmaps to avoid re-rendering. Results
 are similar to DRAW-STRING, but might not be pixel-for-pixel identical."
   (let* ((font (font *graphics-state*))
-	 (font-size (size font))
-	 (loader (loader font))
-	 (spacing (character-spacing *graphics-state*))
-	 prev-char-width
-	 ch
-	 (ch-width 0)
-	 ch-height
-	 x-offset
-	 y-offset
-	 max-height
-	 (glyphs (string-glyphs string loader))
-	 glyph
-	 (scale-factor (loader-font-scale font-size loader)))
+         (font-size (size font))
+         (loader (loader font))
+         (spacing (character-spacing *graphics-state*))
+         prev-char-width
+         ch
+         (ch-width 0)
+         ch-height
+         x-offset
+         y-offset
+         max-height
+         (glyphs (string-glyphs string loader))
+         glyph
+         (scale-factor (loader-font-scale font-size loader)))
     (setf max-height 
-	  (let ((string-bbox (string-bounding-box string font-size loader 
-						  :character-spacing spacing)))
-	    (+ 2 (round (- (ymax string-bbox) (ymin string-bbox))))))
+          (let ((string-bbox (string-bounding-box string font-size loader 
+                                                  :character-spacing spacing)))
+            (+ 2 (round (- (ymax string-bbox) (ymin string-bbox))))))
     (dotimes (i (length string))
       (setf ch (char string i))
       (setf glyph (pop glyphs))
       (setf prev-char-width ch-width)
       (let* ((bbox (bounding-box glyph))
-	     (ymin (ymin bbox))
-	     (xmin (xmin bbox)))
-	(setf ch-width (+ 2 (round (* scale-factor (- (xmax bbox) (xmin bbox))))))
-	(setf ch-height (+ 2 (round (* scale-factor (- (ymax bbox) ymin)))))
-	(setf x-offset (round (* scale-factor xmin)))
-	(setf y-offset (round (* scale-factor ymin))))
+             (ymin (ymin bbox))
+             (xmin (xmin bbox)))
+        (setf ch-width (+ 2 (round (* scale-factor (- (xmax bbox) (xmin bbox))))))
+        (setf ch-height (+ 2 (round (* scale-factor (- (ymax bbox) ymin)))))
+        (setf x-offset (round (* scale-factor xmin)))
+        (setf y-offset (round (* scale-factor ymin))))
       (unless (and (<= ch-width 2) (<= ch-height 2))
-	(let ((image (get-character-glyph-bitmap ch font))
-	      (override-color (fill-color *graphics-state*)))
-	  (%draw-image (image-data *graphics-state*) (width *graphics-state*) (zpng:image-data image) 
-		       (zpng:width image) (+ x x-offset -1) (+ y y-offset -1)
-		       :override-r (float-octet (red override-color))
-		       :override-g (float-octet (green override-color))
-		       :override-b (float-octet (blue override-color)))))
+        (let ((image (get-character-glyph-bitmap ch font))
+              (override-color (fill-color *graphics-state*)))
+          (%draw-image (image-data *graphics-state*) (width *graphics-state*) (zpng:image-data image) 
+                       (zpng:width image) (+ x x-offset -1) (+ y y-offset -1)
+                       :override-r (float-octet (red override-color))
+                       :override-g (float-octet (green override-color))
+                       :override-b (float-octet (blue override-color)))))
       (when glyphs
-	(let* ((w (zpb-ttf:advance-width glyph))
-	       (k (zpb-ttf:kerning-offset glyph (first glyphs) loader))
-	       (offset (round (* scale-factor (+ w k)))))
-	  (incf x offset))))))
+        (let* ((w (zpb-ttf:advance-width glyph))
+               (k (zpb-ttf:kerning-offset glyph (first glyphs) loader))
+               (offset (round (* scale-factor (+ w k)))))
+          (incf x offset))))))
 
 (defun %draw-string (state x y string)
   (draw-paths/state (%string-paths state x y string)
@@ -366,7 +367,7 @@ are similar to DRAW-STRING, but might not be pixel-for-pixel identical."
 
 (defun draw-image (x y image)
   (%draw-image (image-data *graphics-state*) (width *graphics-state*) 
-	       (zpng:image-data image) (zpng:width image) x y))
+               (zpng:image-data image) (zpng:width image) x y))
 
 (defun draw-string (x y string)
   (%draw-string *graphics-state* x y string))
@@ -476,13 +477,20 @@ are similar to DRAW-STRING, but might not be pixel-for-pixel identical."
 (defun rotate-degrees (degrees)
   (%rotate *graphics-state* (* (/ pi 180) degrees)))
 
+(defparameter *write-png-function* nil
+  "Optional PNG writing function for use by SAVE-PNG. If NIL, ZPNG's
+  facilities will be used. If non-NIL, is a function compatible with the
+  lambda list (FILE IMAGE-DATA WIDTH HEIGHT) that encodes a PNG image into the
+  file named by FILE, a pathname designator. IMAGE-DATA must be an RGBA array
+  of type OCTET-VECTOR containing uncompressed image data. WIDTH and HEIGHT
+  are the width and height of the image in pixels, respectively.")
+
 (defun save-png (file)
-  #-mocl
-  (zpng:write-png (image *graphics-state*) file)
-  ;; fast png writing for mocl, > 10x speed-up on mobile (ARM) CPUs
-  #+mocl
-  (let ((image (image *graphics-state*)))
-    (rt::write-png file (zpng::image-data image) (zpng::width image) (zpng::height image))))
+  (let ((image (image *graphics-state*))) 
+    (if *write-png-function*
+        (funcall *write-png-function* file (zpng::image-data image) 
+                 (zpng::width image) (zpng::height image))
+        (zpng:write-png image file))))
 
 (defun save-png-stream (stream)
   (zpng:write-png-stream (image *graphics-state*) stream))

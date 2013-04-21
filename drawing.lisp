@@ -47,7 +47,10 @@
 ;; ( (t) = (a) * (b) + 0x80, ( ( ( (t)>>8 ) + (t) )>>8 ) )
 
 (defun imult (a b)
-  (declare (type fixnum a b))
+  (declare (type octet a)
+           ;; b is usually expected to be an octet as well, but in the special
+           ;; case of the caller lerp, can be negative
+           (type (integer -255 255) b))
   (let ((temp (+ (* a b) #x80)))
     (logand #xFF (ash (+ (ash temp -8) temp) -8))))
 
@@ -62,7 +65,7 @@
 (defun draw-function (data width height fill-source alpha-fun)
   "From http://www.teamten.com/lawrence/graphics/premultiplication/"
   (declare (ignore height)
-	   (type octet-vector data))
+           (type octet-vector data))
   (lambda (x y alpha)
     (multiple-value-bind (r.fg g.fg b.fg a.fg)
         (funcall fill-source x y)
@@ -90,7 +93,7 @@
                               alpha-fun)
   "Like DRAW-FUNCTION, but uses uses the clipping channel."
   (declare (ignore height)
-	   (type octet-vector data))
+           (type octet-vector data))
   (lambda (x y alpha)
     (let* ((clip-index (+ x (* y width)))
            (clip (aref clip-data clip-index)))
@@ -179,7 +182,7 @@ for the set of paths PATHS."
          (j 2 (+ j 4))
          (k 3 (+ k 4)))
         ((<= (length image-data) k))
-      (declare (type fixnum h i j k))
+      (declare (type vector-index h i j k))
       (setf (aref image-data h) r
             (aref image-data i) g
             (aref image-data j) b

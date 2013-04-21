@@ -39,6 +39,7 @@
    ;; canvas operations
    #:with-canvas
    #:clear-canvas
+   #:*write-png-function*
    #:save-png
    #:save-png-stream
    ;; path construction
