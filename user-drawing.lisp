@@ -119,10 +119,14 @@ through one control point."
 
 (defun %draw-centered-string (state x y string)
   (let* ((font (font state))
-         (bbox (string-bounding-box string (size font) (loader font)
-                                    :character-spacing (character-spacing state)))
-         (width/2 (/ (- (xmax bbox) (xmin bbox)) 2.0)))
-    (%draw-string state (- x width/2) y string)))
+         (bbox
+          (string-bounding-box string
+                               (size font)
+                               (loader font)
+                               :character-spacing (character-spacing state)))
+         (xmin (xmin bbox))
+         (width/2 (/ (- (xmax bbox) xmin) 2.0)))
+    (%draw-string state (- x (+ width/2 xmin)) y string)))
 
 (defun string-paths (x y string)
   (setf (paths *graphics-state*)
