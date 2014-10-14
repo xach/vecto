@@ -132,7 +132,7 @@
   (cond ((< eta2 eta1)
          (error "approximate-arc: eta2 must be bigger than eta1"))
         ((> eta2 (+ eta1 (/ pi 2) (* eta2 long-float-epsilon)))
-         (let ((etamid (+ eta1 (/ pi 2))))
+         (let ((etamid (+ eta1 (/ pi 2) (* eta2 long-float-epsilon))))
            (nconc
             (approximate-arc cx cy a b theta eta1 etamid err)
             (approximate-arc cx cy a b theta etamid eta2 err))))
