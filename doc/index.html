@@ -97,6 +97,8 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
       <li> <a href='#quadratic-to'><tt>quadratic-to</tt></a>
       <li> <a href='#arc'><tt>arc</tt></a>
       <li> <a href='#arcn'><tt>arcn</tt></a>
+      <li> <a href='#ellipse-arc'><tt>ellipse-arc</tt></a>
+      <li> <a href='#ellipse-arcn'><tt>ellipse-arcn</tt></a>
       <li> <a href='#close-subpath'><tt>close-subpath</tt></a>
       <li> <a href='#stroke-to-paths'><tt>stroke-to-paths</tt></a>
       <li> <a href='#rectangle'><tt>rectangle</tt></a>
@@ -766,6 +768,25 @@ until it is less than or equal to <i>angle1</i>.
       (save-png file))))
 </pre>  
 
+</blockquote>
+
+<p><a name='ellipse-arc'>[Function]</a><br>
+<b>ellipse-arc</b> <i>cx</i> <i>cy</i> <i>radius-x</i> <i>radius-y</i>
+<i>rotation-angle</i> <i>angle1</i> <i>angle2</i> => |
+
+<blockquote>
+Like <a href='#arc'><tt>ARC</TT></a>, but draws an arc from an
+ellipse. The arc is drawn counterclockwise.
+</blockquote>
+
+
+<p><a name='ellipse-arcn'>[Function]</a><br>
+<b>ellipse-arcn</b> <i>cx</i> <i>cy</i> <i>radius-x</i> <i>radius-y</i>
+<i>rotation-angle</i> <i>angle1</i> <i>angle2</i> => |
+
+<blockquote>
+Like <a href='#ellipse-arcn'><tt>ELLIPSE-ARCN</TT></a>, but draws the
+arc clockwise.
 </blockquote>
 
 

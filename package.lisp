@@ -50,6 +50,8 @@
    #:stroke-to-paths
    #:arc
    #:arcn
+   #:ellipse-arc
+   #:ellipse-arcn
    ;; Clipping
    #:end-path-no-op
    #:clip-path

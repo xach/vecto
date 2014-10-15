@@ -183,6 +183,18 @@ through one control point."
   (let ((curves (approximate-elliptical-arc cx cy r r 0 theta2 theta1)))
     (draw-arc-curves (nreverse (mapcar #'nreverse curves)))))
 
+(defun ellipse-arc (cx cy rx ry theta eta1 eta2)
+  (loop while (< eta2 eta1) do (incf eta2 (* 2 pi)))
+  (let ((curves (approximate-elliptical-arc cx cy rx ry theta eta1 eta2)))
+    (draw-arc-curves curves)))
+
+(defun ellipse-arcn (cx cy rx ry theta eta1 eta2)
+  (loop while (< eta1 eta2) do (decf eta2 (* 2 pi)))
+  (let ((curves (approximate-elliptical-arc cx cy rx ry theta eta2 eta1)))
+    (draw-arc-curves (nreverse (mapcar #'nreverse curves)))))
+
+
+
 (defun close-subpath ()
   (%close-subpath *graphics-state*))
 
