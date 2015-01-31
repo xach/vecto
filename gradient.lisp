@@ -29,7 +29,7 @@
 (in-package #:vecto)
 
 (defun gradient-parameter-fun (x0 y0 x1 y1)
-  (declare (optimize speed))
+  (declare (optimize speed (safety 0)))
   (declare (fixnum x0 y0 x1 y1))
   (lambda (x y)
     (let ((numerator (+ (* (- x1 x0) (- x x0))
