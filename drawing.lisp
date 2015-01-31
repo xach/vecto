@@ -46,14 +46,22 @@
 
 ;; ( (t) = (a) * (b) + 0x80, ( ( ( (t)>>8 ) + (t) )>>8 ) )
 
+(declaim (inline imult lerp prelerp logand ash))
 (defun imult (a b)
-  (let ((temp (+ (* a b) #x80)))
+  (declare (optimize speed (safety 0)))
+  (declare (fixnum a b))
+  (let ((temp (+ (the fixnum (* a b)) #x80)))
+    (declare (fixnum temp))
     (logand #xFF (ash (+ (ash temp -8) temp) -8))))
 
 (defun lerp (p q a)
+  (declare (optimize speed (safety 0)))
+  (declare (fixnum p q a))
   (logand #xFF (+ p (imult a (- q p)))))
 
 (defun prelerp (p q a)
+  (declare (optimize speed (safety 0)))
+  (declare (fixnum p q a))
   (logand #xFF (- (+ p q) (imult a p))))
 
 (defun draw-function (data width height fill-source alpha-fun)
