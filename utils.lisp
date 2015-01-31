@@ -34,7 +34,7 @@
 (declaim (inline float-octet round))
 (declaim (ftype (function (single-float) fixnum) float-octet))
 (defun float-octet (float)
-  (declare (optimize speed (safety 0)))
+  (declare (optimize speed))
   (declare (single-float float))
   "Convert a float in the range 0.0 - 1.0 to an octet."
   (values (the fixnum (round (* float 255.0)))))

@@ -48,25 +48,25 @@
 
 (declaim (inline imult lerp prelerp logand ash))
 (defun imult (a b)
-  (declare (optimize speed (safety 0)))
+  (declare (optimize speed))
   (declare (fixnum a b))
   (let ((temp (+ (the fixnum (* a b)) #x80)))
     (declare (fixnum temp))
     (logand #xFF (ash (+ (ash temp -8) temp) -8))))
 
 (defun lerp (p q a)
-  (declare (optimize speed (safety 0)))
+  (declare (optimize speed))
   (declare (fixnum p q a))
   (logand #xFF (+ p (imult a (- q p)))))
 
 (defun prelerp (p q a)
-  (declare (optimize speed (safety 0)))
+  (declare (optimize speed))
   (declare (fixnum p q a))
   (logand #xFF (- (+ p q) (imult a p))))
 
 (defun draw-function (data width height fill-source alpha-fun)
   "From http://www.teamten.com/lawrence/graphics/premultiplication/"
-  (declare (optimize speed (safety 0)))
+  (declare (optimize speed))
   (declare (ignore height))
   (declare (fixnum width height))
   (declare (function fill-source alpha-fun))
