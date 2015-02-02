@@ -31,9 +31,10 @@
 (defun clamp-range (low value high)
   (min (max value low) high))
 
+(declaim (inline float-octet octet-float))
 (defun float-octet (float)
   "Convert a float in the range 0.0 - 1.0 to an octet."
-  (values (round (* float 255.0))))
+  (the fixnum (round (* float 255.0))))
 
 (defun octet-float (octet)
   "Convert an octet to a float."
