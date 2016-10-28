@@ -82,3 +82,12 @@
                (:file "user-shortcuts"
                       :depends-on ("user-drawing"))))
 
+
+(asdf:defsystem #:opticl-vecto
+  :depends-on (#:vecto
+               #:opticl)
+  :version "0.0.1"
+  :author "Alessandro Serra <gas2serra@gmail.com>"
+  :description "Vecto using opticl"
+  :license "BSD"
+  :components ((:file "opticl")))

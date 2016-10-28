@@ -194,16 +194,17 @@ for the set of paths PATHS."
 (defun stroke-source-function (state)
   (color-source-function (stroke-color state)))
 
-(defun state-draw-function (state fill-source fill-style)
-  "Create a draw function for the graphics state STATE."
-  (make-draw-function (image-data state)
-                      (clipping-path state)
-                      (width state)
-                      (height state)
-                      fill-source
-                      (ecase fill-style
-                        (:even-odd #'even-odd-alpha)
-                        (:nonzero-winding #'nonzero-winding-alpha))))
+(defgeneric state-draw-function (state fill-source fill-style)
+  (:documentation "Create a draw function for the graphics state STATE.")
+  (:method (state fill-source fill-style)
+    (make-draw-function (image-data state)
+			(clipping-path state)
+			(width state)
+			(height state)
+			fill-source
+			(ecase fill-style
+			  (:even-odd #'even-odd-alpha)
+			  (:nonzero-winding #'nonzero-winding-alpha)))))
 
 (defun stroke-draw-function (state)
   (state-draw-function state
