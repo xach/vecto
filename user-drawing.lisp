@@ -326,13 +326,15 @@ through one control point."
   (%rotate *graphics-state* (* (/ pi 180) degrees)))
 
 (defun save-png (file)
-  (zpng:write-png (image *graphics-state*) file))
+  (save-to-png-file *graphics-state* file))
 
 (defun save-png-stream (stream)
-  (zpng:write-png-stream (image *graphics-state*) stream))
+  (save-to-png-stream *graphics-state* file))
+
+(defparameter *canvas-graphics-state-class* 'graphics-state)
 
 (defmacro with-canvas ((&key width height) &body body)
-  `(let ((*graphics-state* (make-instance 'graphics-state)))
+  `(let ((*graphics-state* (make-instance *canvas-graphics-state-class*)))
      (state-image *graphics-state* ,width ,height)
      (unwind-protect
           (progn

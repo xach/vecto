@@ -151,20 +151,21 @@ with the result of premultiplying it with MATRIX.")
 (defmethod (setf paths) :after (new-value (state graphics-state))
   (setf (path state) (first new-value)))
 
-(defun state-image (state width height)
-  "Set the backing image of the graphics state to an image of the
-specified dimensions."
-  (setf (image state)
-        (make-instance 'zpng:png
-                       :width width
-                       :height height
-                       :color-type +png-color-type+)
-        (width state) width
-        (height state) height
-        (clipping-path state) (make-clipping-path width height))
-  (apply-matrix state (translation-matrix 0 (- height))))
+(defgeneric state-image (state width height)
+  (:documentation
+     "Set the backing image of the graphics state to an image of the
+specified dimensions.")
+  (:method (state width height)
+    (setf (image state)
+	  (make-instance 'zpng:png
+			 :width width
+			 :height height
+			 :color-type +png-color-type+)
+	  (width state) width
+	  (height state) height
+	  (clipping-path state) (make-clipping-path width height))
+    (apply-matrix state (translation-matrix 0 (- height)))))
   
-
 (defun find-font-loader (state file)
   (let* ((cache (font-loaders state))
          (key (namestring (truename file))))
@@ -208,3 +209,12 @@ specified dimensions."
                  :font-loaders (font-loaders state)
                  :font (font state)
                  :character-spacing (character-spacing state)))
+
+(defgeneric save-to-png-file (state file)
+  (:method (state file)
+    (zpng:write-png (image state) file)))
+
+(defgeneric save-to-png-stream (state file)
+  (:method (state file)
+    (zpng:write-png-stream (image state) stream)))
+
