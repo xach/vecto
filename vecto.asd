@@ -28,7 +28,7 @@
 
 (asdf:defsystem #:vecto
   :depends-on (#:cl-vectors
-               #:opticl
+               #:zpng
                #:zpb-ttf)
   :version "1.4.10"
   :author "Zach Beane <xach@xach.com>"
