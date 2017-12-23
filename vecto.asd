@@ -30,7 +30,7 @@
   :depends-on (#:cl-vectors
                #:zpng
                #:zpb-ttf)
-  :version "1.4.10"
+  :version "1.5"
   :author "Zach Beane <xach@xach.com>"
   :description "Create vector graphics in PNG files."
   :license "BSD"
