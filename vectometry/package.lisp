@@ -184,8 +184,9 @@
    #:string-paths
    #:draw-centered-string
    #:centered-string-paths
-   #:string-bounding-box))
-   
-   
+   #:string-bounding-box
+   #:draw-box-text))
+
+
 (in-package #:vectometry)
 
