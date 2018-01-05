@@ -131,6 +131,7 @@
    #:transform-function
    ;; re-exported vecto bits
    #:with-canvas
+   #:with-graphics-state
    #:clear-canvas
    #:save-png
    #:save-png-stream
