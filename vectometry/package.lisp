@@ -90,6 +90,14 @@
    #:bottom-left
    #:top-right
    #:bottom-right
+   #:northpoint
+   #:northeastpoint
+   #:eastpoint
+   #:southeastpoint
+   #:southpoint
+   #:southwestpoint
+   #:westpoint
+   #:northwestpoint
    #:with-box-canvas
    ;; re-exported geometry bits
    #:point

@@ -81,6 +81,25 @@
     (let ((box (bounding-box object)))
       (point (xmax box) (ymin box)))))
 
+(macrolet ((compass-point-method (name component1 &optional component2)
+             (if component2
+                 `(defgeneric ,name (object)
+                    (:method (object)
+                      (midpoint (,component1 object)
+                                (,component2 object))))
+                 `(defgeneric ,name (object)
+                    (:method (object)
+                      (,component1 object))))))
+  (compass-point-method northpoint top-left top-right)
+  (compass-point-method northeastpoint top-right)
+  (compass-point-method eastpoint top-right bottom-right)
+  (compass-point-method southeastpoint bottom-right)
+  (compass-point-method southpoint bottom-left bottom-right)
+  (compass-point-method southwestpoint bottom-left)
+  (compass-point-method westpoint bottom-left top-left)
+  (compass-point-method northwestpoint top-left))
+
+
 (defun set-gradient-fill (p1 c1 p2 c2
                           &key (extend-start t) (extend-end t)
                           (domain-function 'vecto:linear-domain))
