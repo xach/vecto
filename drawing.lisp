@@ -56,7 +56,15 @@
 (defun prelerp (p q a)
   (logand #xFF (- (+ p q) (imult a p))))
 
-(defun draw-function (data width height fill-source alpha-fun)
+(defun blend-function-blend (fg a.fg bg a.bg)
+  (lerp (imult bg a.bg) fg a.fg))
+
+(defun blend-function-add (fg a.fg bg a.bg)
+  (clamp-range 0 (+ (imult fg a.fg)
+                    (imult bg a.bg))
+               255))
+
+(defun draw-function (data width height fill-source alpha-fun blend-fun)
   "From http://www.teamten.com/lawrence/graphics/premultiplication/"
   (declare (ignore height))
   (lambda (x y alpha)
@@ -72,7 +80,7 @@
                (a.fg (imult alpha a.fg))
                (gamma (prelerp a.fg a.bg a.bg)))
           (flet ((blend (fg bg)
-                   (let ((value (lerp (imult bg a.bg) fg a.fg)))
+                   (let ((value (funcall blend-fun fg a.fg bg a.bg)))
                      (float-octet (/ value gamma)))))
             (unless (zerop gamma)
               (setf (aref data (+ i 0)) (blend r.fg r.bg)
@@ -83,7 +91,8 @@
 (defun draw-function/clipped (data clip-data
                               width height
                               fill-source
-                              alpha-fun)
+                              alpha-fun
+                              blend-fun)
   "Like DRAW-FUNCTION, but uses uses the clipping channel."
   (declare (ignore height))
   (lambda (x y alpha)
@@ -101,7 +110,7 @@
                  (a.fg (imult alpha a.fg))
                  (gamma (prelerp a.fg a.bg a.bg)))
             (flet ((blend (fg bg)
-                     (let ((value (lerp (imult bg a.bg) fg a.fg)))
+                     (let ((value (funcall blend-fun fg a.fg bg a.bg)))
                        (float-octet (/ value gamma)))))
               (unless (zerop gamma)
                 (setf (aref data (+ i 0)) (blend r.fg r.bg)
@@ -112,13 +121,15 @@
 (defun make-draw-function (data clipping-path
                            width height
                            fill-source
-                           alpha-fun)
+                           alpha-fun
+                           blend-fun)
   (if (emptyp clipping-path)
-      (draw-function data width height fill-source alpha-fun)
+      (draw-function data width height fill-source alpha-fun blend-fun)
       (draw-function/clipped data (clipping-data clipping-path)
                              width height
                              fill-source
-                             alpha-fun)))
+                             alpha-fun
+                             blend-fun)))
 
 (defun intersect-clipping-paths (data temp)
   (declare (type (simple-array (unsigned-byte 8) (*)) data temp))
@@ -203,7 +214,10 @@ for the set of paths PATHS."
                       fill-source
                       (ecase fill-style
                         (:even-odd #'even-odd-alpha)
-                        (:nonzero-winding #'nonzero-winding-alpha))))
+                        (:nonzero-winding #'nonzero-winding-alpha))
+                      (ecase (blend-style state)
+                        (:blend #'blend-function-blend)
+                        (:add #'blend-function-add))))
 
 (defun stroke-draw-function (state)
   (state-draw-function state

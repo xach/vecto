@@ -72,6 +72,9 @@
    (cap-style
     :initarg :cap-style
     :accessor cap-style)
+   (blend-style
+    :initarg :blend-style
+    :accessor blend-style)
    (transform-matrix
     :initarg :transform-matrix
     :accessor transform-matrix)
@@ -101,6 +104,7 @@
    :fill-source nil
    :join-style :miter
    :cap-style :butt
+   :blend-style :blend
    :transform-matrix (scaling-matrix 1.0 -1.0)
    :after-paint-fun (constantly nil)
    :font-loaders (make-hash-table :test 'equal)
