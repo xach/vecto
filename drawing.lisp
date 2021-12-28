@@ -47,13 +47,19 @@
 ;; ( (t) = (a) * (b) + 0x80, ( ( ( (t)>>8 ) + (t) )>>8 ) )
 
 (defun imult (a b)
+  (declare (type octet a)
+           ;; b is usually expected to be an octet as well, but in the special
+           ;; case of the caller lerp, can be negative
+           (type (integer -255 255) b))
   (let ((temp (+ (* a b) #x80)))
     (logand #xFF (ash (+ (ash temp -8) temp) -8))))
 
 (defun lerp (p q a)
+  (declare (type octet p q a))
   (logand #xFF (+ p (imult a (- q p)))))
 
 (defun prelerp (p q a)
+  (declare (type octet p q a))
   (logand #xFF (- (+ p q) (imult a p))))
 
 (defun blend-function-blend (fg a.fg bg a.bg)
@@ -66,7 +72,8 @@
 
 (defun draw-function (data width height fill-source alpha-fun blend-fun)
   "From http://www.teamten.com/lawrence/graphics/premultiplication/"
-  (declare (ignore height))
+  (declare (ignore height)
+           (type octet-vector data))
   (lambda (x y alpha)
     (multiple-value-bind (r.fg g.fg b.fg a.fg)
         (funcall fill-source x y)
@@ -94,7 +101,8 @@
                               alpha-fun
                               blend-fun)
   "Like DRAW-FUNCTION, but uses uses the clipping channel."
-  (declare (ignore height))
+  (declare (ignore height)
+           (type octet-vector data))
   (lambda (x y alpha)
     (let* ((clip-index (+ x (* y width)))
            (clip (aref clip-data clip-index)))
@@ -175,6 +183,7 @@ for the set of paths PATHS."
 
 (defun fill-image (image-data red green blue alpha)
   "Completely fill IMAGE with the given colors."
+  (declare (type octet-vector image-data))
   (let ((r (float-octet red))
         (g (float-octet green))
         (b (float-octet blue))
@@ -184,6 +193,7 @@ for the set of paths PATHS."
          (j 2 (+ j 4))
          (k 3 (+ k 4)))
         ((<= (length image-data) k))
+      (declare (type vector-index h i j k))
       (setf (aref image-data h) r
             (aref image-data i) g
             (aref image-data j) b

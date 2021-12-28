@@ -39,6 +39,7 @@
    ;; canvas operations
    #:with-canvas
    #:clear-canvas
+   #:*write-png-function*
    #:save-png
    #:save-png-stream
    ;; path construction
@@ -93,7 +94,10 @@
    #:set-font
    #:set-character-spacing
    #:draw-string
+   #:draw-string-fast
    #:string-paths
    #:draw-centered-string
    #:centered-string-paths
-   #:string-bounding-box))
+   #:string-bounding-box
+   ;; images
+   #:draw-image))

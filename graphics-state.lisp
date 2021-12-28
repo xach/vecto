@@ -183,10 +183,14 @@ specified dimensions."
                (ignore-errors (zpb-ttf:close-font-loader loader)))
              (font-loaders state))))
 
-(defgeneric clear-state (state)
+(defgeneric clear-state (state &key &allow-other-keys)
   (:documentation "Clean up any state in STATE.")
-  (:method ((state graphics-state))
-    (close-font-loaders state)))
+  (:method ((state graphics-state) &key (close-font-loaders t))
+    ;; Optionally close font loaders. We may wish to re-use them across 
+    ;; different graphics states when time is of the essence, in which
+    ;; case, they must not be closed prematurely.
+    (when close-font-loaders
+      (close-font-loaders state))))
 
 (defun clear-fill-source (state)
   (setf (fill-source state) nil))
