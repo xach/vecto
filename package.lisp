@@ -81,6 +81,8 @@
    #:set-gradient-fill
    #:linear-domain
    #:bilinear-domain
+   #:cartesian-coordinates
+   #:polar-coordinates
    ;; graphics state coordinate transforms
    #:translate
    #:rotate

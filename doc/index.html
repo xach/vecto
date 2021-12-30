@@ -404,6 +404,20 @@ to the end color from the start point to the midpoint, then back to
 the start color from the midpoint to the end point
 </ul>
 
+
+<p>Two coordinate functions are available:
+
+<ul>
+
+<li> <tt>CARTESIAN-COORDINATES</tt>, the default, creates a linear
+gradient.
+
+<li> <tt>POLAR-COORDINATES</tt> creates a radial gradient with the
+start point denoting the start of the circle and the end point
+denoting the ending circle.
+</ul>
+
+
 <pre><img style='float: right' class='transparent'
  src='linear-gradient.png'>(defun gradient-example (file)
   (with-canvas (:width 200 :height 50)

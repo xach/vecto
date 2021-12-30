@@ -28,14 +28,6 @@
 
 (in-package #:vecto)
 
-(defun gradient-parameter-fun (x0 y0 x1 y1)
-  (lambda (x y)
-    (let ((numerator (+ (* (- x1 x0) (- x x0))
-                        (* (- y1 y0) (- y y0))))
-          (denominator (+ (expt (- x1 x0) 2)
-                          (expt (- y1 y0) 2))))
-      (/ numerator denominator))))
-
 (defun linear-domain (param)
   (clamp-range 0 param 1))
 
@@ -45,6 +37,25 @@
         param
         (- 2 param))))
 
+(defun cartesian-coordinates (x0 y0 x1 y1)
+  (lambda (x y)
+    (let ((numerator (+ (* (- x1 x0) (- x x0))
+                        (* (- y1 y0) (- y y0))))
+          (denominator (+ (expt (- x1 x0) 2)
+                          (expt (- y1 y0) 2))))
+      (/ numerator denominator))))
+
+(defun polar-coordinates (x0 y0 x1 y1)
+  (flet ((distance (start-x start-y end-x end-y)
+           (let ((x-distance (- end-x start-x))
+                 (y-distance (- end-y start-y)))
+             (sqrt (+ (expt x-distance 2)
+                      (expt y-distance 2))))))
+    (let ((original-distance (distance x0 y0 x1 y1)))
+      (lambda (x y)
+        (let ((distance (distance x0 y0 x y)))
+          (- 1 (/ (- original-distance distance) original-distance)))))))
+
 (defun set-gradient-fill (x0 y0
                           r0 g0 b0 a0
                           x1 y1
@@ -52,10 +63,11 @@
                           &key
                           (extend-start t)
                           (extend-end t)
-                          (domain-function 'linear-domain))
+                          (domain-function 'linear-domain)
+                          (coordinates-function 'cartesian-coordinates))
   (let* ((matrix (transform-matrix *graphics-state*))
          (fun (make-transform-function (invert-matrix matrix)))
-         (gfun (gradient-parameter-fun x0 y0 x1 y1)))
+         (gfun (funcall coordinates-function x0 y0 x1 y1)))
     (setf r0 (float-octet r0)
           g0 (float-octet g0)
           b0 (float-octet b0)
