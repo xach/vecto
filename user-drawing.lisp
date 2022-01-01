@@ -325,6 +325,8 @@ through one control point."
 (defun rotate-degrees (degrees)
   (%rotate *graphics-state* (* (/ pi 180) degrees)))
 
+(defgeneric compose (layer x y))
+
 (defun save-png (file)
   (zpng:write-png (image *graphics-state*) file))
 

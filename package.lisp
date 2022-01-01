@@ -83,6 +83,8 @@
    #:bilinear-domain
    #:cartesian-coordinates
    #:polar-coordinates
+   ;; generic functions for handling foreign images
+   #:compose
    ;; graphics state coordinate transforms
    #:translate
    #:rotate

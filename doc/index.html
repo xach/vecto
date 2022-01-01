@@ -65,6 +65,7 @@ is <a href="http://www.xach.com/lisp/vecto/">http://www.xach.com/lisp/vecto/</a>
     <ul>
       <li> <a href='#with-canvas'><tt>with-canvas</tt></a>
       <li> <a href='#clear-canvas'><tt>clear-canvas</tt></a>
+      <li> <a href='#compose'><tt>compose</tt></a>
       <li> <a href='#save-png'><tt>save-png</tt></a>
       <li> <a href='#save-png-stream'><tt>save-png-stream</tt></a>
     </ul>
@@ -320,6 +321,24 @@ completely clear (all pixels have 0 alpha).
 <blockquote>
 Completely fills the canvas with the current fill color. Any marks on
 the canvas are cleared.
+</blockquote>
+
+
+<p><a name='save-png'>[Generic Function]</a><br>
+<b>compose</b> <i>layer</i> <i>x</i> <i>y</i> => |
+
+<blockquote>
+Performs image composition by superimposing <i>image</i> on top of the
+current canvas, starting from the lower-left corner of the image.
+
+<b>This composition disregards all transformations done to the image's
+coordinate system, such as translations, skewing, rotations, etc..</b>
+Use systems that manipulate raster graphics (such as
+<a href='https://common-lisp.net/project/imago/'>Imago</a>) to adjust
+the raster image before compositing it with Vecto.
+
+This GF has no default implementations and is meant to be implemented
+by users.
 </blockquote>
 
 
