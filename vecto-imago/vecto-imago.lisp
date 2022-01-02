@@ -30,8 +30,9 @@
 
 (deftype png-image-dimension () '(unsigned-byte 31))
 
-(defmethod v:compose ((layer imago:rgb-image))
+(defmethod v:compose ((layer imago:rgb-image) x-offset y-offset)
   (declare (optimize speed))
+  (declare (type (signed-byte 32) x-offset y-offset))
   (let* ((src (imago:image-pixels layer))
          (zpng (v:zpng-object))
          (dest (zpng:image-data zpng)))
@@ -51,8 +52,8 @@
              (matrix-y-offset (ceiling
                                (the (single-float 0f0 #.(* (ash 1 31) 1f0))
                                     (v::transform-matrix-y-offset matrix))))
-             (x-offset (+ matrix-x-offset))
-             (y-offset (- matrix-y-offset src-height)))
+             (x-offset (+ matrix-x-offset x-offset))
+             (y-offset (- matrix-y-offset y-offset src-height)))
         (declare (type png-image-dimension dest-height dest-width))
         (dotimes (src-y src-height)
           (dotimes (src-x src-width)
