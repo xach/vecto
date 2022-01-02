@@ -163,11 +163,16 @@ specified dimensions."
             (let ((samples (zpng:samples-per-pixel +png-color-type+)))
               (funcall image-data-allocator (* width height samples))))))
     (setf (image state)
-          (make-instance 'zpng:png
-                         :width width
-                         :height height
-                         :color-type +png-color-type+
-                         :image-data maybe-image-data)
+          (if image-data-allocator
+              (make-instance 'zpng:png
+                             :width width
+                             :height height
+                             :color-type +png-color-type+
+                             :image-data maybe-image-data)
+              (make-instance 'zpng:png
+                             :width width
+                             :height height
+                             :color-type +png-color-type+))
           (width state) width
           (height state) height
           (clipping-path state) (make-clipping-path width height)))

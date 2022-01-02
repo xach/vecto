@@ -345,14 +345,14 @@ the canvas are cleared.
 
 
 <p><a name='compose'>[Generic Function]</a><br>
-<b>compose</b> <i>layer</i> <i>x</i> <i>y</i> => |
+<b>compose</b> <i>layer</i> => |
 
 <blockquote>
 Performs image composition by superimposing <i>image</i> on top of the
-current canvas, starting from the lower-left corner of the image.
+current canvas, starting from the coordinate center of the image.
 
 <b>This composition disregards all transformations done to the image's
-coordinate system, such as translations, skewing, rotations, etc..</b>
+coordinate system other than translations - so, skewing, rotations, etc..</b>
 Use systems that manipulate raster graphics (such as
 <a href='https://common-lisp.net/project/imago/'>Imago</a>) to adjust
 the raster image before compositing it with Vecto.

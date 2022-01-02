@@ -30,9 +30,8 @@
 
 (deftype png-image-dimension () '(unsigned-byte 31))
 
-(defmethod v:compose ((layer imago:rgb-image) x-offset y-offset)
+(defmethod v:compose ((layer imago:rgb-image))
   (declare (optimize speed))
-  (declare (type (signed-byte 32) x-offset y-offset))
   (let* ((src (imago:image-pixels layer))
          (zpng (v:zpng-object))
          (dest (zpng:image-data zpng)))
@@ -42,7 +41,18 @@
       (declare (type png-image-dimension src-height src-width))
       (let* ((dest-height (z:height zpng))
              (dest-width (z:width zpng))
-             (y-offset (- dest-height src-height y-offset)))
+             ;; TODO: stop being ugly here, write a reader function in vecto
+             ;; which returns the transform matrix
+             ;; and then export accessor functions for it
+             (matrix (v::transform-matrix v::*graphics-state*))
+             (matrix-x-offset (ceiling
+                               (the (single-float 0f0 #.(* (ash 1 31) 1f0))
+                                    (v::transform-matrix-x-offset matrix))))
+             (matrix-y-offset (ceiling
+                               (the (single-float 0f0 #.(* (ash 1 31) 1f0))
+                                    (v::transform-matrix-y-offset matrix))))
+             (x-offset (+ matrix-x-offset))
+             (y-offset (- matrix-y-offset src-height)))
         (declare (type png-image-dimension dest-height dest-width))
         (dotimes (src-y src-height)
           (dotimes (src-x src-width)
@@ -58,7 +68,8 @@
                        (src-b (i:color-blue src-color))
                        (dest-y-offset (* dest-y dest-width))
                        (dest-xy-offset (+ dest-y-offset dest-x))
-                       (dest-offset (* (z:samples-per-pixel zpng)
+                       (dest-offset (* (the (unsigned-byte 8)
+                                            (z:samples-per-pixel zpng))
                                        dest-xy-offset))
                        (dest-a (aref dest (+ dest-offset 3)))
                        (dest-b (aref dest (+ dest-offset 2)))
