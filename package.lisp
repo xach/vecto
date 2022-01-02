@@ -41,6 +41,7 @@
    #:clear-canvas
    #:save-png
    #:save-png-stream
+   #:zpng-object
    ;; path construction
    #:move-to
    #:line-to

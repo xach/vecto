@@ -333,9 +333,14 @@ through one control point."
 (defun save-png-stream (stream)
   (zpng:write-png-stream (image *graphics-state*) stream))
 
-(defmacro with-canvas ((&key width height) &body body)
+(defun zpng-object ()
+  (image *graphics-state*))
+
+(defmacro with-canvas ((&key width height image-data-allocator)
+                       &body body)
   `(let ((*graphics-state* (make-instance 'graphics-state)))
-     (state-image *graphics-state* ,width ,height)
+     (state-image *graphics-state* ,width ,height
+                  ,@(when image-data-allocator `(,image-data-allocator)))
      (unwind-protect
           (progn
             ,@body)

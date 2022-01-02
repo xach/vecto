@@ -305,13 +305,33 @@ distribution. That file starts with:
 <a name='sect-canvases'><h4>Canvases</h4></a>
 
 <p><a name='with-canvas'>[Macro]</a><br>
-<b>with-canvas</b> (<tt>&amp;key</tt> <i>width</i> <i>height</i>)
-<tt>&amp;body</tt> <i>body</i>
+<b>with-canvas</b> (<tt>&amp;key</tt> <i>width</i> <i>height</i>
+<i>image-data-allocator</i>) <tt>&amp;body</tt> <i>body</i>
 
 <blockquote>
 Evaluates <i>body</i> with a canvas established with the specified
 dimensions as the target for drawing commands. The canvas is initially
 completely clear (all pixels have 0 alpha).
+
+It is possible to provide a one-argument function to the
+<i>image-data-allocator</i> argument. That function will be called with
+one argument (the size of the resulting vector) and must return a vector
+of <i>(unsigned-byte 8)</i> which will be used as storage for the image
+data. This is useful e.g. for using a
+<a href='https://github.com/sionescu/static-vectors'>static vector</a>
+for the storage in order to make the resulting PNG data interoperable
+with foreign libraries:
+
+<pre><img style='float: right' class='transparent'
+          src='linear-gradient.png'>(flet ((allocate (size)
+         (static-vectors:make-static-vector size :initial-element 0)))
+  (with-canvas (:width ... :height ...
+                :image-data-allocator #'allocate)
+    ...))
+</pre>
+
+Also see <a href='#zpng-object'><tt>ZPNG-OBJECT</tt></a>.
+
 </blockquote>
 
 
@@ -324,7 +344,7 @@ the canvas are cleared.
 </blockquote>
 
 
-<p><a name='save-png'>[Generic Function]</a><br>
+<p><a name='compose'>[Generic Function]</a><br>
 <b>compose</b> <i>layer</i> <i>x</i> <i>y</i> => |
 
 <blockquote>
@@ -359,6 +379,13 @@ Writes the contents of the canvas as a PNG to <i>stream</i>, which
 must accept <tt>(unsigned-byte&nbsp;8)</tt> data.
 </blockquote>
 
+
+<p><a name='zpng-object'>[Function]</a><br>
+<b>zpng-object</b> => <i>png</i>
+
+<blockquote>
+Returns the ZPNG object representing the canvas.
+</blockquote>
 
 <a name='sect-graphics-state'><h4>Graphics State</h4></a>
 
