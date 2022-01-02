@@ -158,24 +158,23 @@ with the result of premultiplying it with MATRIX.")
 (defun state-image (state width height &optional image-data-allocator)
   "Set the backing image of the graphics state to an image of the
 specified dimensions."
-  (let ((maybe-image-data
-          (when image-data-allocator
-            (let ((samples (zpng:samples-per-pixel +png-color-type+)))
-              (funcall image-data-allocator (* width height samples))))))
-    (setf (image state)
-          (if image-data-allocator
-              (make-instance 'zpng:png
-                             :width width
-                             :height height
-                             :color-type +png-color-type+
-                             :image-data maybe-image-data)
-              (make-instance 'zpng:png
-                             :width width
-                             :height height
-                             :color-type +png-color-type+))
-          (width state) width
-          (height state) height
-          (clipping-path state) (make-clipping-path width height)))
+  (setf (image state)
+        (if image-data-allocator
+            (make-instance 'zpng:png
+                           :width width
+                           :height height
+                           :color-type +png-color-type+
+                           :image-data (let ((samples (zpng:samples-per-pixel
+                                                       +png-color-type+)))
+                                         (funcall image-data-allocator
+                                                  (* width height samples))))
+            (make-instance 'zpng:png
+                           :width width
+                           :height height
+                           :color-type +png-color-type+))
+        (width state) width
+        (height state) height
+        (clipping-path state) (make-clipping-path width height))
   (apply-matrix state (translation-matrix 0 (- height))))
 
 (defun find-font-loader (state file)
