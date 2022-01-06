@@ -41,6 +41,7 @@
    #:clear-canvas
    #:save-png
    #:save-png-stream
+   #:zpng-object
    ;; path construction
    #:move-to
    #:line-to
@@ -83,6 +84,8 @@
    #:bilinear-domain
    #:cartesian-coordinates
    #:polar-coordinates
+   ;; generic functions for handling foreign images
+   #:compose
    ;; graphics state coordinate transforms
    #:translate
    #:rotate

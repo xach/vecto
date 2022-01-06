@@ -155,19 +155,27 @@ with the result of premultiplying it with MATRIX.")
 (defmethod (setf paths) :after (new-value (state graphics-state))
   (setf (path state) (first new-value)))
 
-(defun state-image (state width height)
+(defun state-image (state width height &optional image-data-allocator)
   "Set the backing image of the graphics state to an image of the
 specified dimensions."
   (setf (image state)
-        (make-instance 'zpng:png
-                       :width width
-                       :height height
-                       :color-type +png-color-type+)
+        (if image-data-allocator
+            (make-instance 'zpng:png
+                           :width width
+                           :height height
+                           :color-type +png-color-type+
+                           :image-data (let ((samples (zpng:samples-per-pixel
+                                                       +png-color-type+)))
+                                         (funcall image-data-allocator
+                                                  (* width height samples))))
+            (make-instance 'zpng:png
+                           :width width
+                           :height height
+                           :color-type +png-color-type+))
         (width state) width
         (height state) height
         (clipping-path state) (make-clipping-path width height))
   (apply-matrix state (translation-matrix 0 (- height))))
-  
 
 (defun find-font-loader (state file)
   (let* ((cache (font-loaders state))
